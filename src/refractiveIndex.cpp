@@ -2,13 +2,22 @@
 #include <stdexcept>
 #include <fstream>
 #include <cassert>
+
+#ifndef CURRENT_DIR
+  #error The macro CURRENT_DIR should be defined by the CMake file
+#endif
+
+#define MACRO_TO_STRING(name) #name
+#define DIR MACRO_TO_STRING(CURRENT_DIR)
+
 using namespace std;
-const map<elementName, filename> RefractiveIndex::knownElements = {{"Ta", "MatProp/indexRefrTa.txt"},
-                                    {"C2H6O", "MatProp/indexRefrC2H6O.txt"},
-                                    {"SiO2", "MatProp/indexRefrSiO2.txt"},
-                                    {"C2H6O2", "MatProp/indexRefrC2H6O2.txt"},
-                                    {"Pb", "MatProp/indexRefrPb.txt"},
-                                    {"Au", "MatProp/indexRefrAu.txt"},
+const std::string dir(DIR);
+const map<elementName, filename> RefractiveIndex::knownElements = {{"Ta", dir+"/MatProp/indexRefrTa.txt"},
+                                    {"C2H6O", dir+"/MatProp/indexRefrC2H6O.txt"},
+                                    {"SiO2", dir+"/MatProp/indexRefrSiO2.txt"},
+                                    {"C2H6O2", dir+"/MatProp/indexRefrC2H6O2.txt"},
+                                    {"Pb", dir+"/MatProp/indexRefrPb.txt"},
+                                    {"Au", dir+"/MatProp/indexRefrAu.txt"},
                                     {"Vacuum", ""}};
 
 void RefractiveIndex::load( const char* element )
