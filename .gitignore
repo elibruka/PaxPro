@@ -1,0 +1,6 @@
+# The following files will be ignored
+*.cmake
+CMakeCache.txt
+install_manifest.txt
+Makefile
+CMakeFiles/*

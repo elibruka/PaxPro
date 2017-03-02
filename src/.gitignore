@@ -1,0 +1,3 @@
+# The following files will be ignored
+CMakeFiles/*
+*.a
