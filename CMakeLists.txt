@@ -16,11 +16,11 @@ include_directories( /usr/lib/x86_64-linux-gnu/hdf5/serial/include )
 set( INSTALL_INC_DIR /usr/local/include )
 set( INSTALL_LIB_DIR /usr/local/lib )
 
+# ========================== FIND ALL LIBRARIES ================================
 link_directories( /usr/local/lib )
 link_directories( /usr/lib/x86_64-linux-gnu )
 set( CMAKE_LIBRARY_PATH /usr/lib/x86_64-linux-gnu )
 
-# Find required packages
 find_package( LAPACK REQUIRED )
 include_directories(${LAPACK_INCLUDE_DIR})
 set(LIB ${LAPACK_LIBRARIES})
@@ -112,6 +112,7 @@ endif()
 set( LIB ${LIB} ${FFTW_LIB} )
 set( LIB ${LIB} "m") # Add C-math library
 include_directories( FFTW_INC )
+#=========================== COMPILE LIBRARY ===================================
 
 add_subdirectory( src )
 FILE(GLOB HEADERFILES "include/*.hpp" )
