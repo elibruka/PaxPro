@@ -1,9 +1,8 @@
-#include "sphere.hpp"
-#include "planeWave.hpp"
-#include "paraxialEquation.hpp"
-#include "genericScattering.hpp"
-#include "crankNicholson.hpp"
-#include "controlFile.hpp"
+#include <PaxPro/planeWave.hpp>
+#include <PaxPro/paraxialEquation.hpp>
+#include <PaxPro/genericScattering.hpp>
+#include <PaxPro/crankNicholson.hpp>
+#include <PaxPro/controlFile.hpp>
 #include <iostream>
 #include <visa/visa.hpp>
 #include <pei/dialogBox.hpp>
@@ -22,7 +21,7 @@ class Sphere: public MaterialFunction
 {
 public:
   Sphere( double rad ): radius(rad){};
-  void getXrayMatProp( double x, double y, double z, double &delta, double &beta )
+  void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const override
   {
     double rSq = x*x + y*y + z*z;
     if ( rSq < radius*radius )

@@ -116,3 +116,7 @@ include_directories( FFTW_INC )
 add_subdirectory( src )
 FILE(GLOB HEADERFILES "include/*.hpp" )
 install( FILES ${HEADERFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
+
+#========================= EXAMPLES ============================================
+add_executable( sphere.out Examples/sphere.cpp )
+target_link_libraries( sphere.out ${LIB} paxpro )
