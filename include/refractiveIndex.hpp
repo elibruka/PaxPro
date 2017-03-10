@@ -16,6 +16,9 @@ public:
   /** Load data from file for a given element */
   void load( const char *element );
 
+  /** Same as load, but a user defined file specified by fname is used in stead of the build-in material props */
+  void loadUserDefinedFile( const char* fname );
+
   /** Get delta at the given energy in eV */
   double getDelta( double energyInEv ) const;
 
@@ -32,5 +35,8 @@ private:
   std::vector<double> delta;
   std::vector<double> beta;
   bool isVacuum{false};
+
+  /** Loads the data from file */
+  void readFromFile( const std::string &fname );
 };
 #endif

@@ -35,28 +35,38 @@ void RefractiveIndex::load( const char* element )
     isVacuum = true;
     return;
   }
-
   string fname(knownElements.at(lookUp));
-  ifstream infile;
-  infile.open( fname.c_str() );
-  if ( !infile.good() )
-  {
-    throw (runtime_error("Could not open refractive index file!"));
-  }
+  readFromFile( fname );
+}
 
-  // Read the first two lines
-  string line;
-  getline( infile, line);
-  getline( infile, line);
+void RefractiveIndex::loadUserDefinedFile( const char* fname )
+{
+  string filename(fname);
+  readFromFile( filename );
+}
 
-  double newEnergy, newDelta, newBeta;
-  while( infile >> newEnergy >> newDelta >> newBeta )
-  {
-    energy.push_back( newEnergy );
-    delta.push_back( newDelta );
-    beta.push_back( newBeta );
-  }
-  infile.close();
+void RefractiveIndex::readFromFile( const string &fname )
+{
+    ifstream infile;
+    infile.open( fname.c_str() );
+    if ( !infile.good() )
+    {
+      throw (runtime_error("Could not open refractive index file!"));
+    }
+
+    // Read the first two lines
+    string line;
+    getline( infile, line);
+    getline( infile, line);
+
+    double newEnergy, newDelta, newBeta;
+    while( infile >> newEnergy >> newDelta >> newBeta )
+    {
+      energy.push_back( newEnergy );
+      delta.push_back( newDelta );
+      beta.push_back( newBeta );
+    }
+    infile.close();
 }
 
 unsigned int RefractiveIndex::closestAbove( double energyInEv ) const
