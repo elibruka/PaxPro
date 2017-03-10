@@ -186,7 +186,7 @@ void FFTSolver3D::refraction( unsigned int step )
       plots->draw();
     }
 
-    values = -arma::arg( *currentSolution );
+    values = arma::flipud( -arma::arg( *currentSolution ) ); 
     plots->get("Phase").setImg( values );
     plots->draw();
     plots->show();
