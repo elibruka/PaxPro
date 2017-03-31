@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 
 project( ParaxialSimulationLibrary )
 set( CMAKE_CXX_STANDARD 11 )
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #add_definitions( -DARMA_NO_DEBUG )
 add_definitions( -O2 )
 add_definitions( -DCURRENT_DIR=${CMAKE_CURRENT_SOURCE_DIR})
