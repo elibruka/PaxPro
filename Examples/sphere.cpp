@@ -1,18 +1,6 @@
-#include <PaxPro/planeWave.hpp>
-#include <PaxPro/paraxialEquation.hpp>
 #include <PaxPro/genericScattering.hpp>
-#include <PaxPro/crankNicholson.hpp>
 #include <PaxPro/controlFile.hpp>
 #include <iostream>
-#include <visa/visa.hpp>
-#include <pei/dialogBox.hpp>
-#include <armadillo>
-#include <chrono>
-#include <thread>
-#include <map>
-#include <sstream>
-#define KEEP_PLOT_FOR_SEC 3
-//#define FAKE_RESULT_WITH_PURE_PHASE_SHIFT
 
 using namespace std;
 
