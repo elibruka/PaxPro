@@ -91,12 +91,24 @@ void Solver3D::copyCurrentSolution( unsigned int step )
     assert( maxY < currentSolution->n_cols );
 
     // Downsample the array
-    #pragma omp parallel for
-    for ( unsigned int i=0;i<solution->n_rows*solution->n_cols;i++ )
+    if ( currZ < solution->n_slices )
     {
-      unsigned int row = i%solution->n_rows;
-      unsigned int col = i/solution->n_rows;
-      (*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
+      #pragma omp parallel for
+      for ( unsigned int i=0;i<solution->n_rows*solution->n_cols;i++ )
+      {
+        unsigned int row = i%solution->n_rows;
+        unsigned int col = i/solution->n_rows;
+        (*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
+      }
+    }
+    else
+    {
+      static bool printWarning = true;
+      if ( printWarning )
+      {
+        cout << "Warning! The z-index is out of bounds. Stops saving fields...\n";
+        printWarning = false;
+      }
     }
   }
 }
