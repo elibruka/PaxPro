@@ -2,16 +2,19 @@
 #include <stdexcept>
 #include <fstream>
 #include <cassert>
+#include "config.h"
 
+/*
 #ifndef CURRENT_DIR
   #error The macro CURRENT_DIR should be defined by the CMake file
 #endif
 
 #define MACRO_TO_STRING(name) #name
 #define DIR MACRO_TO_STRING(CURRENT_DIR)
-
+*/
 using namespace std;
-const std::string dir(DIR);
+//const std::string dir(DIR);
+const std::string dir(SOURCE_DIR);
 const map<elementName, filename> RefractiveIndex::knownElements = {{"Ta", dir+"/MatProp/indexRefrTa.txt"},
                                     {"C2H6O", dir+"/MatProp/indexRefrC2H6O.txt"},
                                     {"SiO2", dir+"/MatProp/indexRefrSiO2.txt"},
@@ -51,7 +54,10 @@ void RefractiveIndex::readFromFile( const string &fname )
     infile.open( fname.c_str() );
     if ( !infile.good() )
     {
-      throw (runtime_error("Could not open refractive index file!"));
+      string msg("Could not open refractive index file ");
+      msg += fname;
+      msg += "!";
+      throw (runtime_error(msg));
     }
 
     // Read the first two lines

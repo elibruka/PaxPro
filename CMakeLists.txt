@@ -5,7 +5,7 @@ set( CMAKE_CXX_STANDARD 11 )
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #add_definitions( -DARMA_NO_DEBUG )
 add_definitions( -O2 )
-add_definitions( -DCURRENT_DIR=${CMAKE_CURRENT_SOURCE_DIR})
+#add_definitions( -DCURRENT_DIR=${CMAKE_CURRENT_SOURCE_DIR})
 set( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fopenmp")
 
 # Add libraries
@@ -113,6 +113,8 @@ endif()
 set( LIB ${LIB} ${FFTW_LIB} )
 set( LIB ${LIB} "m") # Add C-math library
 include_directories( FFTW_INC )
+
+configure_file( include/config.h.in include/config.h)
 #=========================== COMPILE LIBRARY ===================================
 
 add_subdirectory( src )
