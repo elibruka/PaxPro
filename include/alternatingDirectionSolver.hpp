@@ -13,6 +13,9 @@ public:
 
   /** Solves one step */
   virtual void solveStep( unsigned int step ) override;
+
+  /** If true transparent boundary conditions will be used, otherwise Dirichlet boundary conditions are used*/
+  bool useTBC{true};
 private:
   ThomasAlgorithm matrixSolver;
 

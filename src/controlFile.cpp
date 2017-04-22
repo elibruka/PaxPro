@@ -31,7 +31,7 @@ ControlFile::ControlFile(): base(new Json::Value), uid(0), fname(""){};
 
 ControlFile::~ControlFile()
 {
-  delete base;
+  delete base; base=NULL;
 }
 
 void ControlFile::save() const

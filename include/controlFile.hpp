@@ -37,7 +37,7 @@ public:
   unsigned int getUID() const { return uid; };
 private:
   std::string fname;
-  Json::Value *base;
+  Json::Value *base{NULL};
   unsigned int uid;
   static const unsigned int uidDigits = 6;
   std::vector<std::string> requiredFields;

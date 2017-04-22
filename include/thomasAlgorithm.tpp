@@ -1,9 +1,10 @@
-
+#include <omp.h>
 template <class T>
 void ThomasAlgorithm::solve( T diag[], const T subdiag[], T rhs[], unsigned int N) const
 {
   // Store a copy of the supdiag
   T supdiag[N-1];
+  #pragma omp parallel for
   for ( unsigned int i=0;i<N-1;i++ )
   {
     supdiag[i] = subdiag[i];

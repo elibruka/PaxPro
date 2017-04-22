@@ -50,7 +50,7 @@ void ADI::xImplicit( unsigned int step )
         rhs[indx] += 0.5*im*(*prevSolution)(j,i+1)/(k*dy*dy);
       }
   }
-  applyTBC( diag, rhs, ImplicitDirection_t::X );
+  if ( useTBC ) applyTBC( diag, rhs, ImplicitDirection_t::X );
 
   // Solve the system
   matrixSolver.solve( diag, subdiag, rhs, Nx*Ny );
@@ -115,7 +115,7 @@ void ADI::yImplicit( unsigned int step )
         rhs[indx] += 0.5*im*(*prevSolution)(i+1,j)/(k*dx*dx);
       }
   }
-  applyTBC( diag, rhs, ImplicitDirection_t::Y );
+  if ( useTBC ) applyTBC( diag, rhs, ImplicitDirection_t::Y );
 
   // Solve the system
   matrixSolver.solve( diag, subdiag, rhs, Nx*Ny );
@@ -148,6 +148,7 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
   {
     case ImplicitDirection_t::X:
       // X-direction is implicit
+      #pragma omp parallel for
       for ( unsigned int i=0;i<Ny;i++ )
       {
         cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
@@ -165,6 +166,7 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       }
 
       // In y-direction
+      #pragma omp parallel for
       for ( unsigned int i=0;i<Nx;i++ )
       {
         // y=Ny-1
@@ -182,6 +184,7 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       break;
     case ImplicitDirection_t::Y:
     // Y-direction is implicit
+    #pragma omp parallel for
     for ( unsigned int i=0;i<Nx;i++ )
     {
       cdouble kdy = -im*log((*prevSolution)(i,Ny-1)/(*prevSolution)(i,Ny-2));
@@ -199,6 +202,7 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
     }
 
     // In x-direction
+    #pragma omp parallel for
     for ( unsigned int i=0;i<Ny;i++ )
     {
       // y=Ny-1

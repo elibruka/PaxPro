@@ -8,6 +8,11 @@ GenericScattering::GenericScattering( const char* name ): ParaxialSimulation(nam
   gbeam.setDim( ParaxialSource::Dim_t::THREE_D );
 }
 
+GenericScattering::~GenericScattering()
+{
+  delete reference; reference=NULL;
+}
+
 void GenericScattering::setMaxScatteringAngle( double anglemax )
 {
   ff.setAngleRange( -anglemax, anglemax );
@@ -110,10 +115,12 @@ void GenericScattering::solve()
   // Reference run
   ParaxialSimulation::solve();
 
-  if ( useFFTSolver ) reference = fft3Dsolver.getLastSolution3D();
-  else reference = adisolver.getLastSolution3D();
+  delete reference;
+  reference = new arma::cx_mat;
+  if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
+  else *reference = adisolver.getLastSolution3D();
 
-  ff.setReference( reference );
+  ff.setReference( *reference );
   clog << "Reference solution computed\n";
 
   reset();

@@ -25,17 +25,17 @@ yDisc(new Disctretization), name(name){};
 
 ParaxialSimulation::~ParaxialSimulation()
 {
-  if ( xDisc != NULL ) delete xDisc;
-  if ( zDisc != NULL ) delete zDisc;
-  if ( yDisc != NULL ) delete yDisc;
+  delete xDisc; xDisc = NULL;
+  delete zDisc; zDisc = NULL;
+  delete yDisc; yDisc = NULL;
 
   if ( solverInitializedViaInit )
   {
-    delete solver;
+    delete solver; solver = NULL;
   }
-  if ( farFieldModulus != NULL ) delete farFieldModulus;
-  if ( file != NULL ) delete file;
-  if ( maingroup != NULL ) delete maingroup;
+  delete farFieldModulus; farFieldModulus = NULL;
+  delete file; file = NULL;
+  delete maingroup; maingroup = NULL;
 }
 
 void ParaxialSimulation::solve()

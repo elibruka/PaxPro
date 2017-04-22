@@ -11,6 +11,9 @@ using namespace std;
 Solver3D::~Solver3D()
 {
   delete plots; plots=NULL;
+  delete solution; solution=NULL;
+  delete currentSolution; currentSolution=NULL;
+  delete prevSolution; prevSolution=NULL;
 }
 
 void Solver3D::setSimulator( ParaxialSimulation &sim )
@@ -24,9 +27,9 @@ void Solver3D::setSimulator( ParaxialSimulation &sim )
   unsigned int downSampledZ = Nz/guide->longitudinalDiscretization().downsamplingRatio;
 
   // Deallocate if already allocated
-  if ( solution != NULL ) delete solution;
-  if ( prevSolution != NULL ) delete prevSolution;
-  if ( currentSolution != NULL ) delete currentSolution;
+  delete solution; solution=NULL;
+  delete prevSolution; prevSolution=NULL;
+  delete currentSolution; currentSolution=NULL;
 
   prevSolution = new arma::cx_mat(Nx, Ny);
   currentSolution = new arma::cx_mat(Nx, Ny);
@@ -144,7 +147,6 @@ void Solver3D::step()
   if ( realTimeVis )
   {
     arma::mat values = arma::flipud( arma::abs( *currentSolution ) );
-    cout << values.max() << endl;
     plots->get("Intensity").setImg(values);
     values = arma::flipud( -arma::arg( *currentSolution ) );
     plots->get("Phase").setImg( values );

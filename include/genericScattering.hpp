@@ -11,6 +11,7 @@ class GenericScattering: public ParaxialSimulation
 {
 public:
   GenericScattering( const char* name );
+  virtual ~GenericScattering();
 
   void setMaterial(  const MaterialFunction &mat ){ material = &mat; };
 
@@ -64,7 +65,7 @@ private:
   FFTSolver3D fft3Dsolver;
   ADI adisolver;
 
-  arma::cx_mat reference;
+  arma::cx_mat *reference{NULL};
   bool isReferenceRun{true};
 
   /** Has to be called before simulation is solved */
