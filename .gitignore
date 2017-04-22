@@ -7,3 +7,7 @@ CMakeFiles/*
 doxyDoc/*
 *.out
 data/*
+include/config.h
+PythonWrapper/*_*
+PythonWrapper/pypaxpro.py
+PythonWrapper/pypaxpro.pyc
