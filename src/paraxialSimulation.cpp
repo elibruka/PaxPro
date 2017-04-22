@@ -418,6 +418,16 @@ ParaxialSimulation& ParaxialSimulation::operator << (post::FarField &ff )
   return *this;
 }
 
+ParaxialSimulation& ParaxialSimulation::addPostProcessingModule( post::PostProcessingModule &module )
+{
+  return *this << module;
+}
+
+ParaxialSimulation& ParaxialSimulation::addPostProcessingModule( post::FarField &farfield )
+{
+  return *this << farfield;
+}
+
 void ParaxialSimulation::setGroupAttributes()
 {
   if ( maingroup == NULL ) return;

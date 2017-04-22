@@ -138,6 +138,12 @@ public:
   ParaxialSimulation& operator << ( post::PostProcessingModule &module );
   ParaxialSimulation& operator << ( post::FarField &farfield );
 
+  /** Add post processing module */
+  ParaxialSimulation& addPostProcessingModule( post::PostProcessingModule &module );
+
+  /** Add far field post processing module */
+  ParaxialSimulation& addPostProcessingModule( post::FarField &farfield );
+
   // Virtual methods
   /** Run simulation */
   virtual void solve();
