@@ -38,8 +38,8 @@ int main( int argc, char **argv )
   double zmax = 1.05*r;
 
   // Calculate the stepsizes in x and z direction (the step size in y-direction is here assumed to be equal to the one in x-direction)
-  double dx = (xmax-xmin)/1024;
-  double dz = (zmax-zmin)/128;
+  double dx = (xmax-xmin)/512;
+  double dz = (zmax-zmin)/512;
 
   // Initialize the GenericScattering class
   GenericScattering simulation("sphere");
@@ -77,6 +77,9 @@ int main( int argc, char **argv )
 
   // Set the wavelength in nm
   simulation.wavelength = 0.1569;
+
+  simulation.realTimeVisualization = true;
+  simulation.useFFTSolver = false;
 
   // Set how long the padded signal should be when computing the far fields
   simulation.FFTPadLength = 32768;

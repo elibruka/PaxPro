@@ -50,9 +50,16 @@ void GenericScattering::init()
 
   if ( realTimeVisualization )
   {
-    fft3Dsolver.visualizeRealSpace();
-    fft3Dsolver.setIntensityMinMax( intensityMin, intensityMax );
-    fft3Dsolver.setPhaseMinMax( phaseMin, phaseMax );
+    if ( useFFTSolver )
+    {
+      fft3Dsolver.visualizeRealSpace();
+      fft3Dsolver.setIntensityMinMax( intensityMin, intensityMax );
+      fft3Dsolver.setPhaseMinMax( phaseMin, phaseMax );
+    }
+    else
+    {
+      adisolver.realTimeVisualization();
+    }
   }
 
   if ( imgname != "" )
@@ -64,7 +71,8 @@ void GenericScattering::init()
     clog << "Set solver and post processing modules...\n";
   #endif
 
-  setSolver( fft3Dsolver );
+  if ( useFFTSolver ) setSolver( fft3Dsolver );
+  else setSolver( adisolver );
 
   #ifdef PRINT_DEBUG
     clog << "Set boundary conditions from Gaussian beam...\n";
@@ -102,19 +110,22 @@ void GenericScattering::solve()
   // Reference run
   ParaxialSimulation::solve();
 
-  reference = fft3Dsolver.getLastSolution3D();
+  if ( useFFTSolver ) reference = fft3Dsolver.getLastSolution3D();
+  else reference = adisolver.getLastSolution3D();
+
   ff.setReference( reference );
   clog << "Reference solution computed\n";
 
   reset();
   isReferenceRun = false;
-
   if ( realTimeVisualization )
   {
-    fft3Dsolver.visualizeRealSpace();
+    if ( useFFTSolver ) fft3Dsolver.visualizeRealSpace();
+    else adisolver.realTimeVisualization();
   }
   // Set resolution for higher
   setLongitudinalDiscretization( zmin, zmax, dz, downSampleZ );
+  setBoundaryConditions( gbeam );
   ParaxialSimulation::solve();
 }
 

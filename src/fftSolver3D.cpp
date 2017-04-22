@@ -19,8 +19,6 @@ FFTSolver3D::~FFTSolver3D()
     fftw_destroy_plan( ftforw );
     fftw_destroy_plan( ftback );
   }
-
-  if ( plots != NULL ) delete plots;
 }
 
 cdouble FFTSolver3D::kernel( double kx, double ky ) const

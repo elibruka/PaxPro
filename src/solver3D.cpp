@@ -8,6 +8,11 @@
 
 using namespace std;
 
+Solver3D::~Solver3D()
+{
+  delete plots; plots=NULL;
+}
+
 void Solver3D::setSimulator( ParaxialSimulation &sim )
 {
   Solver::setSimulator( sim );
@@ -23,7 +28,7 @@ void Solver3D::setSimulator( ParaxialSimulation &sim )
   if ( prevSolution != NULL ) delete prevSolution;
   if ( currentSolution != NULL ) delete currentSolution;
 
-  prevSolution = new arma::cx_mat(Nx,Ny);
+  prevSolution = new arma::cx_mat(Nx, Ny);
   currentSolution = new arma::cx_mat(Nx, Ny);
   solution = new arma::cx_cube( downSampledX, downSampledX, downSampledZ+1 );
 
@@ -136,6 +141,16 @@ void Solver3D::setInitialConditions( const arma::cx_mat &values )
 
 void Solver3D::step()
 {
+  if ( realTimeVis )
+  {
+    arma::mat values = arma::flipud( arma::abs( *currentSolution ) );
+    cout << values.max() << endl;
+    plots->get("Intensity").setImg(values);
+    values = arma::flipud( -arma::arg( *currentSolution ) );
+    plots->get("Phase").setImg( values );
+    plots->show();
+  }
+
   solveStep( currentStep );
   copyCurrentSolution( currentStep++ );
 }
@@ -165,4 +180,26 @@ void Solver3D::solve()
 const arma::cx_cube& Solver3D::getSolution3D() const
 {
   return *solution;
+}
+
+void Solver3D::realTimeVisualization()
+{
+  realTimeVis = true;
+  delete plots;
+  plots = new visa::WindowHandler;
+  plots->setLayout(2,1);
+  plots->addPlot("Intensity");
+  plots->addPlot("Phase");
+  typedef visa::Colormaps::Colormap_t cmap_t;
+  plots->get("Intensity").setCmap( cmap_t::NIPY_SPECTRAL );
+  plots->get("Phase").setCmap( cmap_t::NIPY_SPECTRAL );
+  plots->get("Intensity").setColorLim(0.0,1.1);
+  plots->get("Phase").setColorLim(-3.14159,3.14159);
+}
+
+void Solver3D::setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax )
+{
+  if ( plots == NULL ) return;
+  plots->get("Intensity").setColorLim( intensityMin, intensityMax );
+  plots->get("Phase").setColorLim( phaseMin, phaseMax );
 }

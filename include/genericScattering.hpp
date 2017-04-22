@@ -5,6 +5,7 @@
 #include "fftSolver3D.hpp"
 #include "gaussianBeam.hpp"
 #include "materialFunction.hpp"
+#include "alternatingDirectionSolver.hpp"
 
 class GenericScattering: public ParaxialSimulation
 {
@@ -51,6 +52,7 @@ public:
   double phaseMax{3.14159};
   std::string imgname{""};
   bool realTimeVisualization{false};
+  bool useFFTSolver{true};
 private:
   const MaterialFunction *material{NULL};
   post::ExitField ef;
@@ -60,6 +62,7 @@ private:
 
   GaussianBeam gbeam;
   FFTSolver3D fft3Dsolver;
+  ADI adisolver;
 
   arma::cx_mat reference;
   bool isReferenceRun{true};

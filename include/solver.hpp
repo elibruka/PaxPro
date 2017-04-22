@@ -12,6 +12,7 @@ class Solver
 public:
   enum class Dimension_t{TWO_D, THREE_D};
   Solver( const char* name,  Dimension_t dim ): name(name), dim(dim){};
+  virtual ~Solver(){};
 
   /** Get the dimension of which the solver domain */
   Dimension_t getDim() const { return dim; };

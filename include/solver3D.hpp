@@ -3,6 +3,7 @@
 #include <armadillo>
 #include <climits>
 #include "solver.hpp"
+#include <visa/visa.hpp>
 
 class ParaxialSimulation;
 
@@ -10,6 +11,7 @@ class Solver3D: public Solver
 {
 public:
   Solver3D( const char* name ):Solver(name, Dimension_t::THREE_D){};
+  virtual ~Solver3D();
 
   /** Set the simulation routine */
   void setSimulator( ParaxialSimulation &sim ) override;
@@ -31,6 +33,12 @@ public:
 
   /** Returns the last solution */
   virtual const arma::cx_mat& getLastSolution3D() const override{ return *prevSolution; };
+
+  /** Use real time visualization */
+  void realTimeVisualization();
+
+  /** Set plot limits */
+  void setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax );
 protected:
   arma::cx_cube *solution{NULL};
   arma::cx_mat *currentSolution{NULL};
@@ -49,5 +57,10 @@ protected:
   virtual void solveStep( unsigned int step ) = 0;
 
   unsigned int secBetweenStatusMessage{UINT_MAX};
+
+  /** Real-time visualization */
+  bool realTimeVis{false};
+
+  visa::WindowHandler *plots{NULL};
 };
 #endif
