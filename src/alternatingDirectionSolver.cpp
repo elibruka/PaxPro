@@ -29,26 +29,26 @@ void ADI::xImplicit( unsigned int step )
   #pragma omp parallel for
   for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-      unsigned int j = indx%Nx;
-      unsigned int i = indx/Nx;
-      double x = guide->getX(j);
-      double y = guide->getY(i);
-      guide->getXrayMatProp(x,y,z,delta,beta);
-      //unsigned int indx = i*Nx+j;
-      diag[indx] = 1.0/dz + im/(k*dx*dx) + beta*k + im*delta*k ;
-      rhs[indx] = ( 1.0/dz - im/(k*dy*dy) )*(*prevSolution)(j,i);
-      if ( j>0 )
-      {
-        subdiag[indx-1] = -0.5*im/(k*dx*dx);
-      }
-      if ( i > 0 )
-      {
-        rhs[indx] += 0.5*im*(*prevSolution)(j,i-1)/(k*dy*dy);
-      }
-      if ( i<Ny-1 )
-      {
-        rhs[indx] += 0.5*im*(*prevSolution)(j,i+1)/(k*dy*dy);
-      }
+    unsigned int j = indx%Nx;
+    unsigned int i = indx/Nx;
+    double x = guide->getX(j);
+    double y = guide->getY(i);
+    guide->getXrayMatProp(x,y,z,delta,beta);
+    //unsigned int indx = i*Nx+j;
+    diag[indx] = 1.0/dz + im/(k*dx*dx) + beta*k + im*delta*k ;
+    rhs[indx] = ( 1.0/dz - im/(k*dy*dy) )*(*prevSolution)(i,j);
+    if ( j>0 )
+    {
+      subdiag[indx-1] = -0.5*im/(k*dx*dx);
+    }
+    if ( i > 0 )
+    {
+      rhs[indx] += 0.5*im*(*prevSolution)(i-1,j)/(k*dy*dy);
+    }
+    if ( i<Ny-1 )
+    {
+      rhs[indx] += 0.5*im*(*prevSolution)(i+1,j)/(k*dy*dy);
+    }
   }
   if ( useTBC ) applyTBC( diag, rhs, ImplicitDirection_t::X );
 
@@ -68,7 +68,7 @@ void ADI::xImplicit( unsigned int step )
   {
     unsigned int i = indx/Nx;
     unsigned int j = indx%Nx;
-    (*currentSolution)(j,i) = diag[indx];
+    (*currentSolution)(i,j) = diag[indx];
   }
   delete [] diag;
   delete [] subdiag;
@@ -95,25 +95,25 @@ void ADI::yImplicit( unsigned int step )
   #pragma omp parallel for
   for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-      unsigned int i = indx/Ny;
-      unsigned int j = indx%Ny;
-      double x = guide->getX(i);
-      double y = guide->getY(j);
-      guide->getXrayMatProp(x,y,z,delta,beta);
-      diag[indx] = 1.0/dz + im/(k*dy*dy + beta*k + im*delta*k );
-      rhs[indx] = (-im/(k*dx*dx) + 1.0/dz)*(*prevSolution)(i,j);
-      if ( j>0 )
-      {
-        subdiag[indx-1] = -0.5*im/(k*dy*dy);
-      }
-      if ( i > 0 )
-      {
-        rhs[indx] += 0.5*im*(*prevSolution)(i-1,j)/(k*dx*dx);
-      }
-      if ( i<Ny-1 )
-      {
-        rhs[indx] += 0.5*im*(*prevSolution)(i+1,j)/(k*dx*dx);
-      }
+    unsigned int i = indx/Ny;
+    unsigned int j = indx%Ny;
+    double x = guide->getX(i);
+    double y = guide->getY(j);
+    guide->getXrayMatProp(x,y,z,delta,beta);
+    diag[indx] = 1.0/dz + im/(k*dy*dy + beta*k + im*delta*k );
+    rhs[indx] = (-im/(k*dx*dx) + 1.0/dz)*(*prevSolution)(j,i);
+    if ( j>0 )
+    {
+      subdiag[indx-1] = -0.5*im/(k*dy*dy);
+    }
+    if ( i > 0 )
+    {
+      rhs[indx] += 0.5*im*(*prevSolution)(j,i-1)/(k*dx*dx);
+    }
+    if ( i<Ny-1 )
+    {
+      rhs[indx] += 0.5*im*(*prevSolution)(j,i+1)/(k*dx*dx);
+    }
   }
   if ( useTBC ) applyTBC( diag, rhs, ImplicitDirection_t::Y );
 
@@ -126,7 +126,7 @@ void ADI::yImplicit( unsigned int step )
   {
     unsigned int i = indx/Ny;
     unsigned int j = indx%Ny;
-    (*currentSolution)(i,j) = diag[indx];
+    (*currentSolution)(j,i) = diag[indx];
   }
   delete [] diag;
   delete [] subdiag;
@@ -161,16 +161,17 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       #pragma omp parallel for
       for ( unsigned int i=0;i<Ny;i++ )
       {
-        cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
+        // ix = Nx-1
+        cdouble kdx = -im*log((*prevSolution)(i,Nx-1)/(*prevSolution)(i,Nx-2));
         if ( kdx.real() < 0.0 ) kdx = 0.0;
         unsigned int indx = i*Nx+Nx-1;
-        diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,Nx-2)) > 1E-5 ) diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
 
-        // Other side
+        // Other side ix=0
         indx = i*Nx;
-        kdx = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
+        kdx = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
         if ( kdx.real() < 0.0 ) kdx = 0.0;
-        diag[indx] -= 0.5*im*exp(-im*kdx)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,1)) > 1E-5 ) diag[indx] -= 0.5*im*exp(-im*kdx)/(k*dx*dx);
       }
 
       // In y-direction
@@ -178,50 +179,52 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       for ( unsigned int i=0;i<Nx;i++ )
       {
         // y=Ny-1
-        cdouble kdy = -im*log((*prevSolution)(i,Ny-1)/(*prevSolution)(i,Ny-2));
+        cdouble kdy = -im*log((*prevSolution)(Ny-1,i)/(*prevSolution)(Ny-2,i));
         if ( kdy.real() < 0.0 ) kdy = 0.0;
-        unsigned int indx = (Ny-1)*Nx + i;
-        rhs[indx] += 0.5*im*exp(im*kdy)*(*prevSolution)(i,Ny-1)/(k*dy*dy);
+        unsigned int indx = (Ny-1)*Nx+i;
+        if ( abs((*prevSolution)(Ny-2,i)) > 1E-5 ) rhs[indx] += 0.5*im*exp(im*kdy)*(*prevSolution)(Ny-1,i)/(k*dy*dy);
 
         // Other side y = 0
         indx = i;
-        kdy = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
+        kdy = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
         if ( kdy.real() < 0.0 ) kdy = 0.0;
-        rhs[indx] +=  0.5*im*exp(-im*kdy)*(*prevSolution)(i,0)/(k*dy*dy);
+        if ( abs((*prevSolution)(1,i)) > 1E-5 ) rhs[indx] += 0.5*im*exp(-im*kdy)*(*prevSolution)(0,i)/(k*dy*dy);
       }
       break;
     case ImplicitDirection_t::Y:
       // Y-direction is implicit
+
       #pragma omp parallel for
       for ( unsigned int i=0;i<Nx;i++ )
       {
-        cdouble kdy = -im*log((*prevSolution)(i,Ny-1)/(*prevSolution)(i,Ny-2));
+        // In y-direction: y = Ny-1
+        cdouble kdy = -im*log( (*prevSolution)(Ny-1,i)/(*prevSolution)(Ny-2,i) );
         if ( kdy.real() < 0.0 ) kdy = 0.0;
         unsigned int indx = i*Ny+Ny-1;
-        diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
+        if ( abs((*prevSolution)(Ny-2,i)) > 1E-5 ) diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
 
-        // Other side
+        // Other side, y = 0
         indx = i*Ny;
-        kdy = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
+        kdy = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
         if ( kdy.real() < 0.0 ) kdy = 0.0;
-        diag[indx] -= 0.5*im*exp(-im*kdy)/(k*dy*dy);
+        if ( abs((*prevSolution)(1,i)) > 1E-5 ) diag[indx] -= 0.5*im*exp(-im*kdy)/(k*dy*dy);
       }
 
       // In x-direction
       #pragma omp parallel for
       for ( unsigned int i=0;i<Ny;i++ )
       {
-        // y=Ny-1
-        cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
+        // x=Nx-1
+        cdouble kdx = -im*log((*prevSolution)(i,Nx-1)/(*prevSolution)(i,Nx-2));
         if ( kdx.real() < 0.0 ) kdx = 0.0;
         unsigned int indx = (Nx-1)*Ny + i;
-        rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(Nx-1,i)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,Nx-2)) > 1E-5 ) rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(i,Nx-1)/(k*dx*dx);
 
-        // Other side y = 0
+        // Other side x = 0
         indx = i;
-        kdx = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
+        kdx = im*log( (*prevSolution)(i,0)/(*prevSolution)(i,1) );
         if ( kdx.real() < 0.0 ) kdx = 0.0;
-        rhs[indx] +=  0.5*im*exp(-im*kdx)*(*prevSolution)(0,i)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,1)) > 1E-5 ) rhs[indx] +=  0.5*im*exp(-im*kdx)*(*prevSolution)(i,0)/(k*dx*dx);
       }
       break;
   }

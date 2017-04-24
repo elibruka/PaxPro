@@ -31,8 +31,8 @@ void Solver3D::setSimulator( ParaxialSimulation &sim )
   delete prevSolution; prevSolution=NULL;
   delete currentSolution; currentSolution=NULL;
 
-  prevSolution = new arma::cx_mat(Nx, Ny);
-  currentSolution = new arma::cx_mat(Nx, Ny);
+  prevSolution = new arma::cx_mat(Ny,Nx);
+  currentSolution = new arma::cx_mat(Ny,Nx);
   solution = new arma::cx_cube( downSampledX, downSampledX, downSampledZ+1 );
 
   if ( downSampledX != Nx )
