@@ -2,6 +2,7 @@
 #include "paraxialSimulation.hpp"
 #include <cassert>
 #include <omp.h>
+#define ADI_DEBUG
 
 using namespace std;
 void ADI::xImplicit( unsigned int step )
@@ -14,11 +15,15 @@ void ADI::xImplicit( unsigned int step )
 
   dx = guide->transverseDiscretization().step;
   dy = guide->verticalDiscretization().step;
-  double dz = guide->longitudinalDiscretization().step;
+  double dz = guide->longitudinalDiscretization().step/2.0;
   k = guide->getWavenumber();
 
   double z = guide->getZ(step);
   double delta, beta;
+
+  #ifdef ADI_DEBUG
+    clog << "Building matrix...\n";
+  #endif
 
   // Build matrix system
   #pragma omp parallel for
@@ -26,7 +31,7 @@ void ADI::xImplicit( unsigned int step )
   {
       unsigned int j = indx%Nx;
       unsigned int i = indx/Nx;
-      double x = guide->getX(j);//guide->getX(j);
+      double x = guide->getX(j);
       double y = guide->getY(i);
       guide->getXrayMatProp(x,y,z,delta,beta);
       //unsigned int indx = i*Nx+j;
@@ -52,17 +57,23 @@ void ADI::xImplicit( unsigned int step )
   }
   if ( useTBC ) applyTBC( diag, rhs, ImplicitDirection_t::X );
 
+  #ifdef ADI_DEBUG
+    clog << "Solving matrix...\n";
+  #endif
   // Solve the system
   matrixSolver.solve( diag, subdiag, rhs, Nx*Ny );
 
+  #ifdef ADI_DEBUG
+    clog << "Transferring solution to currentSolution array...\n";
+  #endif
+  
   // Copy the solution to the current solution
-  for ( unsigned int i=0;i<Ny;i++ )
+  #pragma omp parallel for
+  for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-    for ( unsigned int j=0;j<Nx;j++ )
-    {
-      unsigned int indx = i*Nx+j;
-      (*currentSolution)(j,i) = diag[indx];
-    }
+    unsigned int j = indx%Nx;
+    unsigned int i = indx/Nx;
+    (*currentSolution)(j,i) = diag[indx];
   }
   delete [] diag;
   delete [] subdiag;
@@ -79,24 +90,23 @@ void ADI::yImplicit( unsigned int step )
 
   dx = guide->transverseDiscretization().step;
   dy = guide->verticalDiscretization().step;
-  double dz = guide->longitudinalDiscretization().step;
+  double dz = guide->longitudinalDiscretization().step/2.0;
   k = guide->getWavenumber();
 
-  double z = guide->getZ(step) + 0.5*dz;
+  double z = guide->getZ(step) + dz;
   double delta, beta;
 
   // Build matrix system
   #pragma omp parallel for
   for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-      unsigned int i=indx/Ny;
+      unsigned int i = indx/Ny;
       unsigned int j = indx%Ny;
-      double x = guide->getY(i);
-      double y = guide->getX(j);
+      double x = guide->getX(i);
+      double y = guide->getY(j);
       guide->getXrayMatProp(x,y,z,delta,beta);
-      //unsigned int indx = i*Ny+j;
-      diag[indx] = 1.0/dz + 0.5*im/(k*dy*dy) + 0.5*beta*k+0.5*im*delta*k;
-      rhs[indx] = (-0.5*im/(k*dy*dy) - im/(k*dx*dx) - 0.5*beta*k - 0.5*im*delta*k+1.0/dz)*(*prevSolution)(i,j);
+      diag[indx] = 1.0/dz + 0.5*im/(k*dy*dy) + 0.5*beta*k + 0.5*im*delta*k;
+      rhs[indx] = (-0.5*im/(k*dy*dy) - im/(k*dx*dx) - 0.5*beta*k - 0.5*im*delta*k + 1.0/dz)*(*prevSolution)(i,j);
       if ( j>0 )
       {
         subdiag[indx-1] = -0.25*im/(k*dy*dy);
@@ -121,13 +131,12 @@ void ADI::yImplicit( unsigned int step )
   matrixSolver.solve( diag, subdiag, rhs, Nx*Ny );
 
   // Copy the solution to the current solution
-  for ( unsigned int i=0;i<Nx;i++ )
+  #pragma omp parallel for
+  for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-    for ( unsigned int j=0;j<Ny;j++ )
-    {
-      unsigned int indx = i*Ny+j;
-      (*currentSolution)(i,j) = diag[indx];
-    }
+    unsigned int i = indx/Ny;
+    unsigned int j = indx%Ny;
+    (*currentSolution)(i,j) = diag[indx];
   }
   delete [] diag;
   delete [] subdiag;
@@ -136,8 +145,19 @@ void ADI::yImplicit( unsigned int step )
 
 void ADI::solveStep( unsigned int step )
 {
+  #ifdef ADI_DEBUG
+    clog << "Solving X implicitly...\n";
+  #endif
   xImplicit(step);
+
+  #ifdef ADI_DEBUG
+    clog << "Copy solution to previous array...\n";
+  #endif
   copyCurrentSolution(step);
+
+  #ifdef ADI_DEBUG
+    clog << "Solving Y implicitly...\n";
+  #endif
   yImplicit(step);
 }
 
