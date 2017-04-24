@@ -6,6 +6,7 @@
 #include <armadillo>
 #include <gsl/gsl_fit.h>
 #include <complex>
+#define DEBUG_FARFIELD_POST
 
 using namespace std;
 typedef complex<double> cdouble;
@@ -138,6 +139,12 @@ void post::FarField::addAttrib( vector<H5Attr> &attr ) const
 
 void post::FarField::result( const Solver &solver, arma::mat &res )
 {
+  arma::cx_mat solution = solver.getLastSolution3D();
+
+  // Increase the pad length to at least the range of the solution
+  signalLength = signalLength < solution.n_rows ? solution.n_rows:signalLength;
+  signalLength = signalLength < solution.n_cols ? solution.n_cols:signalLength;
+  
   unsigned int Nx = signalLength < res.n_rows ? res.n_rows:signalLength;
   unsigned int Ny = signalLength < res.n_cols ? res.n_cols:signalLength;
 
@@ -152,7 +159,11 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
   assert( indxMax >= indxMin );
 
   unsigned int nrows = indxMax-indxMin+1;
-  clog << "Size: " << nrows << endl;
+
+  #ifdef DEBUG_FARFIELD_POST
+    clog << "Size: " << nrows << endl;
+  #endif
+
   if ( nrows == 0 )
   {
     cout << "The requested far field size is zero!\n";
@@ -163,9 +174,11 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
     cout << "Warning! The requested scattering angle is beyond the maximum limit! Increase the resolution!\n";
   }
 
-  arma::cx_mat solution = solver.getLastSolution3D();
   if ( reference != NULL )
   {
+    #ifdef DEBUG_FARFIELD_POST
+      clog << "Subtracting reference...\n";
+    #endif
     solution -= *reference;
   }
 
@@ -176,6 +189,10 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
 
   // TODO: If mysterious seg. faults occure, check if the pad signal needs to have to extra elements when performing in-place transform
   fftw_plan plan = fftw_plan_dft_1d( pad.n_elem, data, data, FFTW_FORWARD, FFTW_ESTIMATE );
+
+  #ifdef DEBUG_FARFIELD_POST
+    clog << "Perform FFT over columns...\n";
+  #endif
 
   // FFT over columns
   for ( unsigned int i=0;i<solution.n_cols;i++ )
@@ -200,6 +217,10 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
 
   unsigned int ncols = indxMax-indxMin+1;
   res.set_size( nrows, ncols );
+
+  #ifdef DEBUG_FARFIELD_POST
+    clog << "Compute FFT over rows...\n";
+  #endif
   for ( unsigned int i=0;i<temporary.n_rows;i++ )
   {
     pad.subvec( 0, temporary.n_cols-1 ) = temporary.row(i).t();
@@ -216,6 +237,9 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
 
   if ( resizeMatrices )
   {
+    #ifdef DEBUG_FARFIELD_POST
+      clog << "Resize matrix...\n";
+    #endif
     arma::mat copy(res);
     resizeMatrix( copy, res );
   }

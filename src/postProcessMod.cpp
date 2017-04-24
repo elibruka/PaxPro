@@ -14,6 +14,20 @@ void post::Intensity::result( const Solver &solver, arma::cube &res )
   res = arma::abs( solver.getSolution3D() );
 }
 
+void post::IntensityUint8::result( const Solver &solver, arma::Cube<unsigned char> &res )
+{
+  arma::cube tempRes = arma::abs( solver.getSolution3D() );
+  res.set_size(tempRes.n_rows, tempRes.n_cols, tempRes.n_slices );
+  double maxval = tempRes.max();
+  
+  for ( unsigned int i=0;i<tempRes.n_slices;i++ )
+  for ( unsigned int j=0;j<tempRes.n_cols;j++ )
+  for ( unsigned int k=0;k<tempRes.n_rows;k++ )
+  {
+    res(k,j,i) = 256.0*tempRes(k,j,i)/maxval;
+  }
+}
+
 void post::Phase::result( const Solver &solver, arma::mat &res )
 {
   res = arma::arg( solver.getSolution() );

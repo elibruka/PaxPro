@@ -109,7 +109,7 @@ void Solver3D::copyCurrentSolution( unsigned int step )
         unsigned int col = i/solution->n_rows;
         //(*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
         (*solution)(row,col,currZ) = arma::sum( arma::sum(
-          (*currentSolution).submat( row*deltaX, col*deltaY, row*deltaX+deltaX-1, col*deltaY+deltaY-1) ))/(deltaX*deltaY);
+          currentSolution->submat( row*deltaX, col*deltaY, row*deltaX+deltaX-1, col*deltaY+deltaY-1) ))/(deltaX*deltaY);
       }
     }
     else

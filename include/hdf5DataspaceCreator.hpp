@@ -51,4 +51,17 @@ public:
     rank = 3;
   }
 };
+
+template <>
+class DataspaceCreator<arma::Cube<unsigned char> >: public DataspaceBase
+{
+public:
+  void setDims( const arma::Cube<unsigned char>  &cube, hsize_t fdim[] )
+  {
+    fdim[0] = cube.n_rows;
+    fdim[1] = cube.n_cols;
+    fdim[2] = cube.n_slices;
+    rank = 3;
+  }
+};
 #endif

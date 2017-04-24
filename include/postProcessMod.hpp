@@ -20,6 +20,15 @@ public:
   virtual void result( const Solver &solver, arma::cube &res ) override;
 };
 
+class IntensityUint8: public post::FieldQuantity
+{
+public:
+  IntensityUint8(): post::FieldQuantity("amplitude"){ isUint8 = true; };
+
+  /** Amplitude of the solution */
+  virtual void result( const Solver &solver, arma::Cube<unsigned char> &res ) override;
+};
+
 /** Module that returns the phase of the solution */
 class Phase: public FieldQuantity
 {

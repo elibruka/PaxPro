@@ -159,6 +159,7 @@ void ParaxialSimulation::save( ControlFile &ctl )
     arma::vec res1D;
     arma::mat res2D;
     arma::cube res3D;
+    arma::Cube<unsigned char> resUint8_3D;
 
     // Get the result. No two of these functions will always be empty
     postProcess[i]->addAttrib( attrib );
@@ -173,8 +174,16 @@ void ParaxialSimulation::save( ControlFile &ctl )
         saveArray( res2D, postProcess[i]->getName().c_str(), attrib );
         break;
       case ( post::PostProcessingModule::ReturnType_t::cube3D ):
-        postProcess[i]->result( *solver, res3D );
-        saveArray( res3D, postProcess[i]->getName().c_str(), attrib );
+        if ( postProcess[i]->isUint8 )
+        {
+          postProcess[i]->result( *solver, resUint8_3D );
+          saveArray( resUint8_3D, postProcess[i]->getName().c_str(), H5::PredType::NATIVE_UINT8 );
+        }
+        else
+        {
+          postProcess[i]->result( *solver, res3D );
+          saveArray( res3D, postProcess[i]->getName().c_str(), attrib );
+        }
         break;
     }
     clog << "Dataset " << postProcess[i]->getName() << " added to HDF5 file\n";
@@ -274,11 +283,24 @@ template <class arrayType>
 void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname )
 {
   vector<H5Attr> dummy;
-  saveArray( matrix, dsetname, dummy );
+  saveArray( matrix, dsetname, dummy, H5::PredType::NATIVE_DOUBLE );
+}
+
+template <class arrayType>
+void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname, H5::PredType dtype )
+{
+  vector<H5Attr> dummy;
+  saveArray( matrix, dsetname, dummy, dtype );
 }
 
 template <class arrayType>
 void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname, const vector<H5Attr> &attrs )
+{
+  saveArray( matrix, dsetname, attrs, H5::PredType::NATIVE_DOUBLE );
+}
+
+template <class arrayType>
+void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname, const vector<H5Attr> &attrs, H5::PredType dtype )
 {
   // Create dataspace
   hsize_t fdim[3];
@@ -290,7 +312,7 @@ void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname, con
   string name(groupname);
   name += dsetname;
   // Create dataset
-  H5::DataSet ds( file->createDataSet(name, H5::PredType::NATIVE_DOUBLE, dataspace) );
+  H5::DataSet ds( file->createDataSet(name, dtype, dataspace) );
   H5::DataSpace attribSpace(H5S_SCALAR);
   for ( unsigned int i=0;i<attrs.size();i++ )
   {
@@ -308,16 +330,31 @@ void ParaxialSimulation::saveArray( arrayType &matrix, const char* dsetname, con
   }
 
   // Write to file
-  ds.write( matrix.memptr(), H5::PredType::NATIVE_DOUBLE );
+  ds.write( matrix.memptr(), dtype );
 }
 
 // Pre-fine allowed template types
 template void ParaxialSimulation::saveArray<arma::vec>( arma::vec &matrix, const char* dsetname, const vector<H5Attr> &attrs );
 template void ParaxialSimulation::saveArray<arma::mat>( arma::mat &matrix, const char* dsetname, const vector<H5Attr> &attrs );
 template void ParaxialSimulation::saveArray<arma::cube>( arma::cube &matrix, const char* dsetname, const vector<H5Attr> &attrs );
+template void ParaxialSimulation::saveArray<arma::Cube<unsigned char> >( arma::Cube<unsigned char> &matrix, const char* dsetname, const vector<H5Attr> &attrs );
+
+template void ParaxialSimulation::saveArray<arma::vec>( arma::vec &matrix, const char* dsetname, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::mat>( arma::mat &matrix, const char* dsetname, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::cube>( arma::cube &matrix, const char* dsetname, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::Cube<unsigned char> >( arma::Cube<unsigned char> &matrix, const char* dsetname, H5::PredType dtype );
+
 template void ParaxialSimulation::saveArray<arma::vec>( arma::vec &matrix, const char* dsetname );
 template void ParaxialSimulation::saveArray<arma::mat>( arma::mat &matrix, const char* dsetname );
 template void ParaxialSimulation::saveArray<arma::cube>( arma::cube &m, const char* dsetname );
+template void ParaxialSimulation::saveArray<arma::Cube<unsigned char> >( arma::Cube<unsigned char> &m, const char* dsetname );
+
+template void ParaxialSimulation::saveArray<arma::vec>( arma::vec &matrix, const char* dsetname, const vector<H5Attr> &attrs, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::mat>( arma::mat &matrix, const char* dsetname, const vector<H5Attr> &attrs, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::cube>( arma::cube &matrix, const char* dsetname, const vector<H5Attr> &attrs, H5::PredType dtype );
+template void ParaxialSimulation::saveArray<arma::Cube<unsigned char> >( arma::Cube<unsigned char> &matrix, const char* dsetname, const vector<H5Attr> &attrs, H5::PredType dtype );
+
+
 
 void ParaxialSimulation::addAttribute( H5::DataSet &ds, const char* name, double value )
 {

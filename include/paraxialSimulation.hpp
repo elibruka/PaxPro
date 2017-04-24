@@ -205,10 +205,16 @@ protected:
   virtual void saveSpecialDatasets( hid_t file_id, std::vector<std::string> &dset ) const{};
 
   template <class arrayType>
+  void saveArray( arrayType &array, const char* dsetname, const std::vector<H5Attr> &attr, H5::PredType dtype );
+
+  template <class arrayType>
   void saveArray( arrayType &array, const char* dsetname, const std::vector<H5Attr> &attr );
 
   template <class arrayType>
   void saveArray( arrayType &array, const char* dsetname );
+
+  template <class arrayType>
+  void saveArray( arrayType &matrix, const char* dsetname, H5::PredType dtype );
 
   /** Add attribute to dataset */
   void addAttribute( H5::DataSet &ds, const char* name, double value );

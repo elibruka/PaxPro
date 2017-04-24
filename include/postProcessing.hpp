@@ -15,6 +15,7 @@ public:
 
   /** Returns the result */
   virtual void result( const Solver& solver, arma::cube& res ){};
+  virtual void result( const Solver& solver, arma::Cube<unsigned char> &res ){};
   virtual void result( const Solver& solver, arma::mat& res ){};
   virtual void result( const Solver& solver, arma::vec& res ){};
 
@@ -29,6 +30,9 @@ public:
 
   /** Which return type is used */
   virtual ReturnType_t getReturnType( const Solver& solver ) const = 0;
+
+  /** If true, then the data type of the return value is Uint8*/
+  bool isUint8{false};
 protected:
   std::string name;
   unsigned int exportRows{0};

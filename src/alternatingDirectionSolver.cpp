@@ -145,7 +145,8 @@ void ADI::solveStep( unsigned int step )
   #ifdef ADI_DEBUG
     clog << "Copy solution to previous array...\n";
   #endif
-  copyCurrentSolution(step);
+  *prevSolution = *currentSolution;
+  //copyCurrentSolution(step);
 
   #ifdef ADI_DEBUG
     clog << "Solving Y implicitly...\n";
