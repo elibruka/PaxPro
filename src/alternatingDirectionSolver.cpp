@@ -137,6 +137,8 @@ void ADI::solveStep( unsigned int step )
 {
   #ifdef ADI_DEBUG
     clog << "Solving X implicitly...\n";
+    clog << "Prev max/min: " << prevSolution->max() << " " << prevSolution->min() << " ";
+    clog << "- Cur max/min: " << currentSolution->max() << " " << currentSolution->min() << endl;
   #endif
   xImplicit(step);
 
@@ -154,6 +156,7 @@ void ADI::solveStep( unsigned int step )
 void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
 {
   cdouble im(0.0,1.0);
+  double zero = 1E-6;
   switch( dir )
   {
     case ImplicitDirection_t::X:
@@ -162,16 +165,16 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       for ( unsigned int i=0;i<Ny;i++ )
       {
         // ix = Nx-1
-        cdouble kdx = -im*log((*prevSolution)(i,Nx-1)/(*prevSolution)(i,Nx-2));
-        if ( kdx.real() < 0.0 ) kdx = 0.0;
+        cdouble kdx = -im*log( (*prevSolution)(i,Nx-1)/(*prevSolution)(i,Nx-2) );
+        if ( kdx.real() < 0.0 ) kdx.real(0.0);
         unsigned int indx = i*Nx+Nx-1;
-        if ( abs((*prevSolution)(i,Nx-2)) > 1E-5 ) diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,Nx-2)) > zero ) diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
 
         // Other side ix=0
         indx = i*Nx;
-        kdx = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
-        if ( kdx.real() < 0.0 ) kdx = 0.0;
-        if ( abs((*prevSolution)(i,1)) > 1E-5 ) diag[indx] -= 0.5*im*exp(-im*kdx)/(k*dx*dx);
+        kdx = -im*log( (*prevSolution)(i,0)/(*prevSolution)(i,1) );
+        if ( kdx.real() < 0.0 ) kdx.real(0.0);
+        if ( abs((*prevSolution)(i,1)) > zero ) diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
       }
 
       // In y-direction
@@ -179,16 +182,16 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       for ( unsigned int i=0;i<Nx;i++ )
       {
         // y=Ny-1
-        cdouble kdy = -im*log((*prevSolution)(Ny-1,i)/(*prevSolution)(Ny-2,i));
-        if ( kdy.real() < 0.0 ) kdy = 0.0;
+        cdouble kdy = -im*log( (*prevSolution)(Ny-1,i)/(*prevSolution)(Ny-2,i) );
+        if ( kdy.real() < 0.0 ) kdy.real(0.0);
         unsigned int indx = (Ny-1)*Nx+i;
-        if ( abs((*prevSolution)(Ny-2,i)) > 1E-5 ) rhs[indx] += 0.5*im*exp(im*kdy)*(*prevSolution)(Ny-1,i)/(k*dy*dy);
+        if ( abs((*prevSolution)(Ny-2,i)) > zero ) rhs[indx] += 0.5*im*exp(im*kdy)*(*prevSolution)(Ny-1,i)/(k*dy*dy);
 
         // Other side y = 0
         indx = i;
-        kdy = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
-        if ( kdy.real() < 0.0 ) kdy = 0.0;
-        if ( abs((*prevSolution)(1,i)) > 1E-5 ) rhs[indx] += 0.5*im*exp(-im*kdy)*(*prevSolution)(0,i)/(k*dy*dy);
+        kdy = -im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
+        if ( kdy.real() < 0.0 ) kdy.real(0.0);
+        if ( abs((*prevSolution)(1,i)) > zero ) rhs[indx] += 0.5*im*exp(im*kdy)*(*prevSolution)(0,i)/(k*dy*dy);
       }
       break;
     case ImplicitDirection_t::Y:
@@ -198,15 +201,15 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       {
         // In y-direction: y = Ny-1
         cdouble kdy = -im*log( (*prevSolution)(Ny-1,i)/(*prevSolution)(Ny-2,i) );
-        if ( kdy.real() < 0.0 ) kdy = 0.0;
+        if ( kdy.real() < 0.0 ) kdy.real(0.0);
         unsigned int indx = i*Ny+Ny-1;
-        if ( abs((*prevSolution)(Ny-2,i)) > 1E-5 ) diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
+        if ( abs((*prevSolution)(Ny-2,i)) > zero ) diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
 
         // Other side, y = 0
         indx = i*Ny;
-        kdy = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
-        if ( kdy.real() < 0.0 ) kdy = 0.0;
-        if ( abs((*prevSolution)(1,i)) > 1E-5 ) diag[indx] -= 0.5*im*exp(-im*kdy)/(k*dy*dy);
+        kdy = -im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
+        if ( kdy.real() < 0.0 ) kdy.real(0.0);
+        if ( abs((*prevSolution)(1,i)) > zero ) diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
       }
 
       // In x-direction
@@ -215,15 +218,15 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       {
         // x=Nx-1
         cdouble kdx = -im*log((*prevSolution)(i,Nx-1)/(*prevSolution)(i,Nx-2));
-        if ( kdx.real() < 0.0 ) kdx = 0.0;
+        if ( kdx.real() < 0.0 ) kdx.real(0.0);
         unsigned int indx = (Nx-1)*Ny + i;
-        if ( abs((*prevSolution)(i,Nx-2)) > 1E-5 ) rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(i,Nx-1)/(k*dx*dx);
+        if ( abs((*prevSolution)(i,Nx-2)) > zero ) rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(i,Nx-1)/(k*dx*dx);
 
         // Other side x = 0
         indx = i;
-        kdx = im*log( (*prevSolution)(i,0)/(*prevSolution)(i,1) );
-        if ( kdx.real() < 0.0 ) kdx = 0.0;
-        if ( abs((*prevSolution)(i,1)) > 1E-5 ) rhs[indx] +=  0.5*im*exp(-im*kdx)*(*prevSolution)(i,0)/(k*dx*dx);
+        kdx = -im*log( (*prevSolution)(i,0)/(*prevSolution)(i,1) );
+        if ( kdx.real() < 0.0 ) kdx.real(0.0);
+        if ( abs((*prevSolution)(i,1)) > zero ) rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(i,0)/(k*dx*dx);
       }
       break;
   }
