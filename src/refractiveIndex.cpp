@@ -15,12 +15,12 @@
 using namespace std;
 //const std::string dir(DIR);
 const std::string dir(SOURCE_DIR);
-const map<elementName, filename> RefractiveIndex::knownElements = {{"Ta", dir+"/MatProp/indexRefrTa.txt"},
-                                    {"C2H6O", dir+"/MatProp/indexRefrC2H6O.txt"},
-                                    {"SiO2", dir+"/MatProp/indexRefrSiO2.txt"},
-                                    {"C2H6O2", dir+"/MatProp/indexRefrC2H6O2.txt"},
-                                    {"Pb", dir+"/MatProp/indexRefrPb.txt"},
-                                    {"Au", dir+"/MatProp/indexRefrAu.txt"},
+const map<elementName, filename> RefractiveIndex::knownElements = {{"Ta","MatProp/indexRefrTa.txt"},
+                                    {"C2H6O","MatProp/indexRefrC2H6O.txt"},
+                                    {"SiO2","MatProp/indexRefrSiO2.txt"},
+                                    {"C2H6O2","MatProp/indexRefrC2H6O2.txt"},
+                                    {"Pb","MatProp/indexRefrPb.txt"},
+                                    {"Au","MatProp/indexRefrAu.txt"},
                                     {"Vacuum", ""}};
 
 void RefractiveIndex::load( const char* element )
@@ -38,13 +38,17 @@ void RefractiveIndex::load( const char* element )
     isVacuum = true;
     return;
   }
-  string fname(knownElements.at(lookUp));
+  string fname(SOURCE_DIR);
+  fname += "/";
+  fname += knownElements.at(lookUp);
   readFromFile( fname );
 }
 
 void RefractiveIndex::loadUserDefinedFile( const char* fname )
 {
-  string filename(fname);
+  string filename(SOURCE_DIR);
+  filename += "/";
+  filename += fname;
   readFromFile( filename );
 }
 
