@@ -1,6 +1,6 @@
 #include "genericScattering.hpp"
 #include <stdexcept>
-//#define PRINT_DEBUG
+#define PRINT_DEBUG
 
 using namespace std;
 GenericScattering::GenericScattering( const char* name ): ParaxialSimulation(name)
@@ -64,6 +64,7 @@ void GenericScattering::init()
     else
     {
       adisolver.realTimeVisualization();
+      adisolver.useTBC = false;
     }
   }
 
