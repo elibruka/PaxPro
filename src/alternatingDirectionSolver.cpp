@@ -193,7 +193,6 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       break;
     case ImplicitDirection_t::Y:
       // Y-direction is implicit
-
       #pragma omp parallel for
       for ( unsigned int i=0;i<Nx;i++ )
       {
