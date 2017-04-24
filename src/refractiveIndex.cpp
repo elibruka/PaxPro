@@ -46,9 +46,7 @@ void RefractiveIndex::load( const char* element )
 
 void RefractiveIndex::loadUserDefinedFile( const char* fname )
 {
-  string filename(SOURCE_DIR);
-  filename += "/";
-  filename += fname;
+  string filename(fname);
   readFromFile( filename );
 }
 
