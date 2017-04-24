@@ -64,7 +64,7 @@ void GenericScattering::init()
     else
     {
       adisolver.realTimeVisualization();
-      adisolver.useTBC = false;
+      adisolver.useTBC = true;
     }
   }
 
