@@ -2,7 +2,7 @@
 #include "paraxialSimulation.hpp"
 #include <cassert>
 #include <omp.h>
-#define ADI_DEBUG
+//#define ADI_DEBUG
 
 using namespace std;
 void ADI::xImplicit( unsigned int step )
@@ -15,7 +15,7 @@ void ADI::xImplicit( unsigned int step )
 
   dx = guide->transverseDiscretization().step;
   dy = guide->verticalDiscretization().step;
-  double dz = guide->longitudinalDiscretization().step/2.0;
+  double dz = guide->longitudinalDiscretization().step/2.0; // Divide by two since this is just the first half of the propagation step
   k = guide->getWavenumber();
 
   double z = guide->getZ(step);
@@ -35,16 +35,11 @@ void ADI::xImplicit( unsigned int step )
       double y = guide->getY(i);
       guide->getXrayMatProp(x,y,z,delta,beta);
       //unsigned int indx = i*Nx+j;
-      diag[indx] = 1.0/dz + 0.5*im/(k*dx*dx) + 0.5*beta*k + 0.5*im*delta*k;
-      rhs[indx] = (-0.5*im/(k*dx*dx) - im/(k*dy*dy) - 0.5*beta*k - 0.5*im*delta*k + 1.0/dz)*(*prevSolution)(j,i);
+      diag[indx] = 1.0/dz + im/(k*dx*dx) + beta*k + im*delta*k ;
+      rhs[indx] = ( 1.0/dz - im/(k*dy*dy) )*(*prevSolution)(j,i);
       if ( j>0 )
       {
-        subdiag[indx-1] = -0.25*im/(k*dx*dx);
-        rhs[indx] += 0.25*im*(*prevSolution)(j-1,i)/(k*dx*dx);
-      }
-      if ( j<Nx-1 )
-      {
-        rhs[indx] += 0.25*im*(*prevSolution)(j+1,i)/(k*dx*dx);
+        subdiag[indx-1] = -0.5*im/(k*dx*dx);
       }
       if ( i > 0 )
       {
@@ -66,13 +61,13 @@ void ADI::xImplicit( unsigned int step )
   #ifdef ADI_DEBUG
     clog << "Transferring solution to currentSolution array...\n";
   #endif
-  
+
   // Copy the solution to the current solution
   #pragma omp parallel for
   for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
   {
-    unsigned int j = indx%Nx;
     unsigned int i = indx/Nx;
+    unsigned int j = indx%Nx;
     (*currentSolution)(j,i) = diag[indx];
   }
   delete [] diag;
@@ -90,7 +85,7 @@ void ADI::yImplicit( unsigned int step )
 
   dx = guide->transverseDiscretization().step;
   dy = guide->verticalDiscretization().step;
-  double dz = guide->longitudinalDiscretization().step/2.0;
+  double dz = guide->longitudinalDiscretization().step/2.0; // Divide by two, since this is only the second half of the propagation step
   k = guide->getWavenumber();
 
   double z = guide->getZ(step) + dz;
@@ -105,16 +100,11 @@ void ADI::yImplicit( unsigned int step )
       double x = guide->getX(i);
       double y = guide->getY(j);
       guide->getXrayMatProp(x,y,z,delta,beta);
-      diag[indx] = 1.0/dz + 0.5*im/(k*dy*dy) + 0.5*beta*k + 0.5*im*delta*k;
-      rhs[indx] = (-0.5*im/(k*dy*dy) - im/(k*dx*dx) - 0.5*beta*k - 0.5*im*delta*k + 1.0/dz)*(*prevSolution)(i,j);
+      diag[indx] = 1.0/dz + im/(k*dy*dy + beta*k + im*delta*k );
+      rhs[indx] = (-im/(k*dx*dx) + 1.0/dz)*(*prevSolution)(i,j);
       if ( j>0 )
       {
-        subdiag[indx-1] = -0.25*im/(k*dy*dy);
-        rhs[indx] += 0.25*im*(*prevSolution)(i,j-1)/(k*dy*dy);
-      }
-      if ( j<Ny-1 )
-      {
-        rhs[indx] += 0.25*im*(*prevSolution)(i,j+1)/(k*dy*dy);
+        subdiag[indx-1] = -0.5*im/(k*dy*dy);
       }
       if ( i > 0 )
       {
@@ -174,15 +164,13 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
         cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
         if ( kdx.real() < 0.0 ) kdx = 0.0;
         unsigned int indx = i*Nx+Nx-1;
-        diag[indx] -= 0.25*im*exp(im*kdx)/(k*dx*dx);
-        rhs[indx] += 0.25*im*exp(im*kdx)*(*prevSolution)(Nx-1,i)/(k*dx*dx);
+        diag[indx] -= 0.5*im*exp(im*kdx)/(k*dx*dx);
 
         // Other side
         indx = i*Nx;
         kdx = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
         if ( kdx.real() < 0.0 ) kdx = 0.0;
-        diag[indx] -= 0.25*im*exp(-im*kdx)/(k*dx*dx);
-        rhs[indx] += 0.25*im*exp(-im*kdx)*(*prevSolution)(0,i)/(k*dx*dx);
+        diag[indx] -= 0.5*im*exp(-im*kdx)/(k*dx*dx);
       }
 
       // In y-direction
@@ -203,41 +191,38 @@ void ADI::applyTBC( cdouble diag[], cdouble rhs[], ImplicitDirection_t dir )
       }
       break;
     case ImplicitDirection_t::Y:
-    // Y-direction is implicit
-    #pragma omp parallel for
-    for ( unsigned int i=0;i<Nx;i++ )
-    {
-      cdouble kdy = -im*log((*prevSolution)(i,Ny-1)/(*prevSolution)(i,Ny-2));
-      if ( kdy.real() < 0.0 ) kdy = 0.0;
-      unsigned int indx = i*Ny+Ny-1;
-      diag[indx] -= 0.25*im*exp(im*kdy)/(k*dy*dy);
-      rhs[indx] += 0.25*im*exp(im*kdy)*(*prevSolution)(i,Ny-1)/(k*dy*dy);
+      // Y-direction is implicit
+      #pragma omp parallel for
+      for ( unsigned int i=0;i<Nx;i++ )
+      {
+        cdouble kdy = -im*log((*prevSolution)(i,Ny-1)/(*prevSolution)(i,Ny-2));
+        if ( kdy.real() < 0.0 ) kdy = 0.0;
+        unsigned int indx = i*Ny+Ny-1;
+        diag[indx] -= 0.5*im*exp(im*kdy)/(k*dy*dy);
 
-      // Other side
-      indx = i*Ny;
-      kdy = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
-      if ( kdy.real() < 0.0 ) kdy = 0.0;
-      diag[indx] -= 0.25*im*exp(-im*kdy)/(k*dy*dy);
-      rhs[indx] += 0.25*im*exp(-im*kdy)*(*prevSolution)(i,0)/(k*dy*dy);
-    }
+        // Other side
+        indx = i*Ny;
+        kdy = im*log((*prevSolution)(i,0)/(*prevSolution)(i,1));
+        if ( kdy.real() < 0.0 ) kdy = 0.0;
+        diag[indx] -= 0.5*im*exp(-im*kdy)/(k*dy*dy);
+      }
 
-    // In x-direction
-    #pragma omp parallel for
-    for ( unsigned int i=0;i<Ny;i++ )
-    {
-      // y=Ny-1
-      cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
-      if ( kdx.real() < 0.0 ) kdx = 0.0;
-      unsigned int indx = (Nx-1)*Ny + i;
-      rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(Nx-1,i)/(k*dx*dx);
+      // In x-direction
+      #pragma omp parallel for
+      for ( unsigned int i=0;i<Ny;i++ )
+      {
+        // y=Ny-1
+        cdouble kdx = -im*log((*prevSolution)(Nx-1,i)/(*prevSolution)(Nx-2,i));
+        if ( kdx.real() < 0.0 ) kdx = 0.0;
+        unsigned int indx = (Nx-1)*Ny + i;
+        rhs[indx] += 0.5*im*exp(im*kdx)*(*prevSolution)(Nx-1,i)/(k*dx*dx);
 
-      // Other side y = 0
-      indx = i;
-      kdx = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
-      if ( kdx.real() < 0.0 ) kdx = 0.0;
-      rhs[indx] +=  0.5*im*exp(-im*kdx)*(*prevSolution)(0,i)/(k*dx*dx);
-    }
-    break;
-
+        // Other side y = 0
+        indx = i;
+        kdx = im*log((*prevSolution)(0,i)/(*prevSolution)(1,i));
+        if ( kdx.real() < 0.0 ) kdx = 0.0;
+        rhs[indx] +=  0.5*im*exp(-im*kdx)*(*prevSolution)(0,i)/(k*dx*dx);
+      }
+      break;
   }
 }

@@ -360,15 +360,16 @@ void ParaxialSimulation::setBoundaryConditions( const ParaxialSource &source )
     }
     case Dim_t::THREE_D:
     {
-      arma::cx_mat values(Nx, Nx);
-      for ( unsigned int i=0;i<Nx;i++ )
+      unsigned int Ny = nodeNumberVertical();
+      arma::cx_mat values(Nx, Ny);
+      #pragma omp parallel for
+      for ( unsigned int indx=0;indx<Nx*Ny;indx++ )
       {
+        unsigned int i = indx/Ny;
+        unsigned int j = indx%Ny;
         double x = getX(i);
-        for ( unsigned int j=0;j<Nx;j++ )
-        {
-          double y = getY(j);
-          values(j,i) = src->get(x,y,0.0);
-        }
+        double y = getY(j);
+        values(j,i) = src->get(x,y,0.0);
       }
       solver->setInitialConditions( values );
     }

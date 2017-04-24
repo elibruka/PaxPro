@@ -56,7 +56,7 @@ protected:
   /** Solver specific function to propagate one step */
   virtual void solveStep( unsigned int step ) = 0;
 
-  unsigned int secBetweenStatusMessage{UINT_MAX};
+  unsigned int secBetweenStatusMessage{15};
 
   /** Real-time visualization */
   bool realTimeVis{false};

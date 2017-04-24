@@ -38,7 +38,7 @@ int main( int argc, char **argv )
   double zmax = 1.05*r;
 
   // Calculate the stepsizes in x and z direction (the step size in y-direction is here assumed to be equal to the one in x-direction)
-  double dx = (xmax-xmin)/256;
+  double dx = (xmax-xmin)/512;
   double dz = (zmax-zmin)/256;
 
   // Initialize the GenericScattering class
@@ -71,9 +71,9 @@ int main( int argc, char **argv )
   // Thus, if the only interesting quantities is quantities that can be calculated from the
   // exit fields (like total accumulated phase, far field, exit intensity etc. )
   // these values can be set rather high (like below)
-  simulation.downSampleX = 64;
-  simulation.downSampleY = 64;
-  simulation.downSampleZ = 64;
+  simulation.downSampleX = 512;
+  simulation.downSampleY = 512;
+  simulation.downSampleZ = 512;
 
   // Set the wavelength in nm
   simulation.wavelength = 0.1569;

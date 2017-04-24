@@ -87,7 +87,8 @@ void Solver3D::copyCurrentSolution( unsigned int step )
     unsigned int currZ = step/guide->longitudinalDiscretization().downsamplingRatio;
     if (( currentSolution->n_rows != solution->n_rows ) || ( currentSolution->n_cols != solution->n_cols ))
     {
-      filterTransverse( *currentSolution );
+      // TODO: Old implementation of downsampling, remove in future
+      //filterTransverse( *currentSolution );
     }
 
     double deltaX = static_cast<double>( currentSolution->n_rows )/static_cast<double>( solution->n_rows );
@@ -106,7 +107,9 @@ void Solver3D::copyCurrentSolution( unsigned int step )
       {
         unsigned int row = i%solution->n_rows;
         unsigned int col = i/solution->n_rows;
-        (*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
+        //(*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
+        (*solution)(row,col,currZ) = arma::sum( arma::sum(
+          (*currentSolution).submat( row*deltaX, col*deltaY, row*deltaX+deltaX-1, col*deltaY+deltaY-1) ))/(deltaX*deltaY);
       }
     }
     else
