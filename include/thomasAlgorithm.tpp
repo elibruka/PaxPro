@@ -3,7 +3,7 @@ template <class T>
 void ThomasAlgorithm::solve( T diag[], const T subdiag[], T rhs[], unsigned int N) const
 {
   // Store a copy of the supdiag
-  T supdiag[N-1];
+  T *supdiag = new T[N-1]; // Dynamically allocate to avoid stack overflow
   #pragma omp parallel for
   for ( unsigned int i=0;i<N-1;i++ )
   {
@@ -28,4 +28,5 @@ void ThomasAlgorithm::solve( T diag[], const T subdiag[], T rhs[], unsigned int 
   {
     diag[i] = rhs[i] - supdiag[i]*diag[i+1];
   }
+  delete [] supdiag;
 }
