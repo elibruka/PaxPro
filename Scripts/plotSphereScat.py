@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import h5py as h5
 
 DATA_FILE = "data/sphere871436.h5"
-DATA_FILE = "data/sphere877171.h5"
+DATA_FILE = "data/sphere129060.h5"
 def formFactorSphere( q, r ):
     res = 3.0*( np.sin(q*r) - q*r*np.cos(q*r) )/(q*r)**3
     res[np.isnan(res)] = 1.0

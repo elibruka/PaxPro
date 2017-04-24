@@ -78,7 +78,7 @@ int main( int argc, char **argv )
   // Set the wavelength in nm
   simulation.wavelength = 0.1569;
 
-  simulation.realTimeVisualization = false;
+  simulation.realTimeVisualization = true;
   simulation.useFFTSolver = false;
 
   // Set how long the padded signal should be when computing the far fields

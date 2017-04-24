@@ -11,3 +11,4 @@ include/config.h
 PythonWrapper/*_*
 PythonWrapper/pypaxpro.py
 PythonWrapper/pypaxpro.pyc
+src/CMakeFiles/progress.marks
