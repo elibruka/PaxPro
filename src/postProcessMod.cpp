@@ -16,24 +16,25 @@ void post::Intensity::result( const Solver &solver, arma::cube &res )
 
 void post::IntensityUint8::result( const Solver &solver, arma::Cube<unsigned char> &res )
 {
-  arma::cube tempRes = arma::abs( solver.getSolution3D() );
-  res.set_size(tempRes.n_rows, tempRes.n_cols, tempRes.n_slices );
-  double maxval = tempRes.max();
+  //arma::cube tempRes = arma::abs( solver.getSolution3D() );
+  const arma::cx_cube& sol = solver.getSolution3D();
+  res.set_size(sol.n_rows, sol.n_cols, sol.n_slices );
+  double maxval = abs( sol.max() ); // Armadillo uses max
 
-  for ( unsigned int i=0;i<tempRes.n_slices;i++ )
-  for ( unsigned int j=0;j<tempRes.n_cols;j++ )
-  for ( unsigned int k=0;k<tempRes.n_rows;k++ )
+  for ( unsigned int i=0;i<sol.n_slices;i++ )
+  for ( unsigned int j=0;j<sol.n_cols;j++ )
+  for ( unsigned int k=0;k<sol.n_rows;k++ )
   {
-    res(k,j,i) = 256.0*tempRes(k,j,i)/maxval;
+    res(k,j,i) = 255.0*abs( sol(k,j,i) )/maxval;
   }
 }
 
 void post::LogIntensityUint8::result( const Solver &solver, arma::Cube<unsigned char> &res )
 {
-  arma::cube tempRes = arma::log( arma::abs(solver.getSolution3D() ) );
-  res.set_size(tempRes.n_rows, tempRes.n_cols, tempRes.n_slices );
-  double maxvalInSolution = tempRes.max();
-  double minvalInSolution = tempRes.min();
+  const arma::cx_cube& sol = solver.getSolution3D();
+  res.set_size( sol.n_rows,  sol.n_cols,  sol.n_slices );
+  double maxvalInSolution = log( abs(sol.max()) ); // Armadillo used absolute value
+  double minvalInSolution = log( abs(sol.min()) ); // Armadillo used absolute value
 
   // Set upper range of the solution
   double max, min;
@@ -55,21 +56,21 @@ void post::LogIntensityUint8::result( const Solver &solver, arma::Cube<unsigned 
     min = minvalInSolution;
   }
 
-  for ( unsigned int i=0;i<tempRes.n_slices;i++ )
-  for ( unsigned int j=0;j<tempRes.n_cols;j++ )
-  for ( unsigned int k=0;k<tempRes.n_rows;k++ )
+  for ( unsigned int i=0;i<sol.n_slices;i++ )
+  for ( unsigned int j=0;j<sol.n_cols;j++ )
+  for ( unsigned int k=0;k<sol.n_rows;k++ )
   {
-    if ( tempRes(k,j,i) > max )
+    if ( log(abs(sol(k,j,i))) > max )
     {
       res(k,j,i) = 255;
     }
-    else if ( tempRes(k,j,i) < min )
+    else if ( log(abs(sol(k,j,i))) < min )
     {
       res(k,j,i) = 0;
     }
     else
     {
-      res(k,j,i) = 255*( tempRes(k,j,i)-min )/(max-min);
+      res(k,j,i) = 255*( log(abs(sol(k,j,i)))-min )/(max-min);
     }
   }
 }
