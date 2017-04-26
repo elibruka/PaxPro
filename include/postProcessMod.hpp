@@ -20,6 +20,7 @@ public:
   virtual void result( const Solver &solver, arma::cube &res ) override;
 };
 
+/** Module that converts the intensity to Uint8 before exporting */
 class IntensityUint8: public post::FieldQuantity
 {
 public:
@@ -27,6 +28,27 @@ public:
 
   /** Amplitude of the solution */
   virtual void result( const Solver &solver, arma::Cube<unsigned char> &res ) override;
+};
+
+/** Module that exports the log of the amplitude (the logarithm is taken before conversion)*/
+class LogIntensityUint8: public post::FieldQuantity
+{
+public:
+  LogIntensityUint8(): post::FieldQuantity("LogAmplitude"){ isUint8 = true; };
+
+  /** Logarithm of the amplitude of the solution*/
+  virtual void result( const Solver &solver, arma::Cube<unsigned char> &res ) override;
+
+  /** Sets the minimum value, values below this will be set equal to this value */
+  void setMinValue( double minval );
+
+  /** Sets the maximum value, values above this will be set equal to this value */
+  void setMaxValue( double maxval );
+private:
+  double maxval{0.0};
+  double minval{0.0};
+  bool maxvalSet{false};
+  bool minvalSet{false};
 };
 
 /** Module that returns the phase of the solution */

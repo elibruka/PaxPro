@@ -164,6 +164,7 @@ void Solver3D::solve()
 {
   auto lastTime = chrono::steady_clock::now();
   auto now = lastTime;
+  bool printEstimatedTime = true;
   for ( unsigned int i=1;i<guide->nodeNumberLongitudinal();i++ )
   {
     step();
@@ -174,6 +175,16 @@ void Solver3D::solve()
     {
       clog << "Propagation step: " << i << " of " << guide->nodeNumberLongitudinal() << endl;
       lastTime = chrono::steady_clock::now();
+      if ( printEstimatedTime )
+      {
+        double timePerStep = elapsedSec.count()/i;
+        int totalSec = timePerStep*guide->nodeNumberLongitudinal();
+        int hours = totalSec/3600;
+        int min = (totalSec-3600*hours)/60;
+        int sec = totalSec-3600*hours-60*min;
+        clog << "Estimated time: " << hours << "h " << min << "min " << sec << "s\n";
+        printEstimatedTime = false;
+      }
     }
   }
 

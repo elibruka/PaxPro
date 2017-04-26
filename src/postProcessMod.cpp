@@ -19,13 +19,71 @@ void post::IntensityUint8::result( const Solver &solver, arma::Cube<unsigned cha
   arma::cube tempRes = arma::abs( solver.getSolution3D() );
   res.set_size(tempRes.n_rows, tempRes.n_cols, tempRes.n_slices );
   double maxval = tempRes.max();
-  
+
   for ( unsigned int i=0;i<tempRes.n_slices;i++ )
   for ( unsigned int j=0;j<tempRes.n_cols;j++ )
   for ( unsigned int k=0;k<tempRes.n_rows;k++ )
   {
     res(k,j,i) = 256.0*tempRes(k,j,i)/maxval;
   }
+}
+
+void post::LogIntensityUint8::result( const Solver &solver, arma::Cube<unsigned char> &res )
+{
+  arma::cube tempRes = arma::log( arma::abs(solver.getSolution3D() ) );
+  res.set_size(tempRes.n_rows, tempRes.n_cols, tempRes.n_slices );
+  double maxvalInSolution = tempRes.max();
+  double minvalInSolution = tempRes.min();
+
+  // Set upper range of the solution
+  double max, min;
+  if ( maxvalSet )
+  {
+    max = maxvalInSolution > maxval ? maxval:maxvalInSolution;
+  }
+  else
+  {
+    max = maxvalInSolution;
+  }
+
+  if ( minvalSet )
+  {
+    min = minvalInSolution < minval ? minval:minvalInSolution;
+  }
+  else
+  {
+    min = minvalInSolution;
+  }
+
+  for ( unsigned int i=0;i<tempRes.n_slices;i++ )
+  for ( unsigned int j=0;j<tempRes.n_cols;j++ )
+  for ( unsigned int k=0;k<tempRes.n_rows;k++ )
+  {
+    if ( tempRes(k,j,i) > max )
+    {
+      res(k,j,i) = 255;
+    }
+    else if ( tempRes(k,j,i) < min )
+    {
+      res(k,j,i) = 0;
+    }
+    else
+    {
+      res(k,j,i) = 255*( tempRes(k,j,i)-min )/(max-min);
+    }
+  }
+}
+
+void post::LogIntensityUint8::setMinValue( double min )
+{
+  minval = log(min);
+  minvalSet = true;
+}
+
+void post::LogIntensityUint8::setMaxValue( double max )
+{
+  maxval = log(max);
+  maxvalSet = true;
 }
 
 void post::Phase::result( const Solver &solver, arma::mat &res )
