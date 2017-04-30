@@ -6,12 +6,19 @@
 #include <vector>
 #include <fstream>
 #include <armadillo>
+#include <map>
+
+struct XrayMatProperty
+{
+  double delta{0.0};
+  double beta{0.0};
+};
 
 class TetraGeometry: public MaterialFunction
 {
 public:
   TetraGeometry(){};
-  ~TetraGeometry();
+  virtual ~TetraGeometry();
 
   /** Load GMSH mesh file */
   void load( const char* fname );
@@ -30,6 +37,12 @@ public:
 
   /** Get the bounding box */
   void boundingBox( double crn1[3], double crn2[3] ) const;
+
+  /** Set X-ray material properties */
+  void setMatProp( const std::map<std::string,XrayMatProperty> &matprops );
+
+  /** Computes the bounding box of individual elements */
+  void tetraBound( unsigned int id, std::array<double,3> &crn1, std::array<double,3> &crn2 ) const;
 private:
   std::vector<double> delta;
   std::vector<double> beta;
@@ -49,5 +62,13 @@ private:
 
   /** Returns true if the point is inside the tetrahedron */
   bool isInside( double x, double y, double z, const Tetrahedron &tetra ) const;
+
+  /** Reads the physical entities */
+  void readPhysicalEntities( std::ifstream &infile );
+
+  /** Checks that imported mesh is consistent */
+  void checkImportedMesh();
+
+  std::map<std::string,unsigned int> physicalEntityNumber;
 };
 #endif

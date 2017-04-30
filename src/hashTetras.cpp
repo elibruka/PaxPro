@@ -1,6 +1,8 @@
 #include "hashTetras.hpp"
 #include "tetraGeometry.hpp"
 #include <iostream>
+#include <cmath>
+//#define DEBUG_HASHTETRAS
 
 using namespace std;
 
@@ -29,19 +31,28 @@ void HashedTetras::setupTable()
   {
     double com[3];
     geo->centerOfMass(i,com);
+    #ifdef DEBUG_HASHTETRAS
+      clog << "COM: " << com[0] << " " << com[1] << " " << com[2] << endl;
+    #endif
     insertID(i,com);
   }
 }
 
 void HashedTetras::build()
 {
-  Nupper = 2*geo->getTetras().size();
+  Nupper = 2*pow( geo->getTetras().size(), 1.0/3.0 );
   Nlower = 1;
   unsigned int maxiter = 100;
   for ( unsigned int i=0;i<maxiter;i++ )
   {
+    clog << "Optimizing LUT: Nupper=" << Nupper << " Nlower=" << Nlower << endl;
     N = (Nupper+Nlower)/2;
     setupTable();
+    if (N==Nlower )
+    {
+      cout << "Cannot optimize LUT further...\n";
+      break;
+    }
 
     bool atLeastOneBucketHasOnlyOneEntry = false;
     bool emptyBucketsExist = false;
@@ -70,7 +81,7 @@ void HashedTetras::build()
     }
     else
     {
-      return;
+      break;
     }
 
     if ( i == (maxiter-1) )
@@ -78,6 +89,7 @@ void HashedTetras::build()
       cout << "Maximum number of iterations reached while building LUT table for tetrahedrons...\n";
     }
   }
+  //N = Nlower;
   printStatistics();
 }
 
@@ -89,7 +101,7 @@ void HashedTetras::insertID( unsigned int id, double com[3] )
 
 void HashedTetras::printStatistics() const
 {
-  int maxTetra = -2;
+  unsigned int maxTetra = 0;
   int minTetra = 100000000;
   double average = 0.0;
   for ( unsigned int i=0;i<buckets.size();i++ )

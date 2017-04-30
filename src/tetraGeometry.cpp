@@ -3,7 +3,8 @@
 #include <sstream>
 #include <iostream>
 #include <armadillo>
-#define TETRA_DEBUG
+#include <cassert>
+//#define TETRA_DEBUG
 
 using namespace std;
 
@@ -27,6 +28,10 @@ void TetraGeometry::load( const char *fname )
   string line;
   while( getline(infile, line) )
   {
+    if ( line.find("$PhysicalNames") != string::npos )
+    {
+      readPhysicalEntities( infile );
+    }
     if ( line.find("$Nodes") != string::npos )
     {
       clog << "Reading nodes...\n";
@@ -37,7 +42,7 @@ void TetraGeometry::load( const char *fname )
       #endif
     }
 
-    if ( line.find("$Elements") )
+    if ( line.find("$Elements") != string::npos )
     {
       clog << "Reading elements...\n";
       readElements( infile );
@@ -47,6 +52,7 @@ void TetraGeometry::load( const char *fname )
     }
   }
   infile.close();
+  checkImportedMesh();
 
   delete lut;
   lut = new HashedTetras(*this);
@@ -55,17 +61,25 @@ void TetraGeometry::load( const char *fname )
 
 void TetraGeometry::readNodes( ifstream &infile )
 {
-  int numberOfNodes;
-  infile >> numberOfNodes;
-  nodes.resize(numberOfNodes);
   string line;
+  getline(infile,line);
+  stringstream ss;
+  ss << line;
+  int numberOfNodes;
+  ss >> numberOfNodes;
+  nodes.resize(numberOfNodes);
   while( getline(infile, line) )
   {
     if ( line.find("$EndNodes") != string::npos ) return;
+
     stringstream ss(line);
     int indx;
     Node newnode;
     ss >> indx >> newnode.x >> newnode.y >> newnode.z;
+
+    #ifdef TETRA_DEBUG
+      cout << "x="<<newnode.x << " y=" << newnode.y << " z=" << newnode.z << endl;
+    #endif
     if ( indx > nodes.size() )
     {
       stringstream msg;
@@ -154,6 +168,7 @@ void TetraGeometry::boundingBox( double crn1[3], double crn2[3] ) const
 
 void TetraGeometry::centerOfMass( unsigned int id, double com[3] ) const
 {
+  assert( id < elements.size() );
   com[0] = 0.0;
   com[1] = 0.0;
   com[2] = 0.0;
@@ -167,4 +182,86 @@ void TetraGeometry::centerOfMass( unsigned int id, double com[3] ) const
   com[0] /= 4.0;
   com[1] /= 4.0;
   com[2] /= 4.0;
+}
+
+void TetraGeometry::checkImportedMesh()
+{
+  unsigned int maxNodeID = nodes.size();
+  for ( unsigned int i=0;i<elements.size();i++ )
+  {
+    int maxNodeIdInElement = 0;
+    for ( unsigned int j=0;j<4;j++ )
+    {
+      if ( elements[i].nodes[j] > maxNodeID )
+      {
+        stringstream msg;
+        msg << "Element requests a node that is out of bounds. Number of nodes: ";
+        msg << maxNodeID;
+        msg << " Requested node: " << elements[i].nodes[j];
+        throw( runtime_error(msg.str()) );
+      }
+    }
+  }
+}
+
+void TetraGeometry::readPhysicalEntities( ifstream &infile )
+{
+  string line;
+  getline(infile,line); // Number of physical entities
+  while( getline(infile,line) )
+  {
+    if ( line.find("$EndPhysicalNames") != string::npos ) return;
+    stringstream ss;
+    ss << line;
+    int dim, number;
+    string name;
+    ss >> dim >> number >> name;
+
+    // Remove quotes
+    name = name.substr(1,name.length()-2);
+    physicalEntityNumber.insert( pair<string,unsigned int>(name,number-1) );
+  }
+}
+
+void TetraGeometry::setMatProp( const map<string,XrayMatProperty> &matprops )
+{
+  if ( matprops.size() != physicalEntityNumber.size() )
+  {
+    stringstream msg;
+    msg << "Material properties list has to be of the same size as the number of physical entities.";
+    msg << " Number of physical entities " << physicalEntityNumber.size();
+    msg << " Number of material properties " << matprops.size();
+    throw( runtime_error(msg.str()) );
+  }
+
+  delta.resize( matprops.size() );
+  beta.resize( matprops.size() );
+  for ( auto iter=matprops.begin(); iter != matprops.end(); ++iter )
+  {
+    // Check that key exists
+    if ( physicalEntityNumber.find(iter->first) == physicalEntityNumber.end() )
+    {
+      string msg("Key ");
+      msg += iter->first;
+      msg += " does not exist in the physical entities!";
+      throw( runtime_error(msg) );
+    }
+    delta[physicalEntityNumber.at(iter->first)] = iter->second.delta;
+    beta[physicalEntityNumber.at(iter->first)] = iter->second.beta;
+  }
+}
+
+void TetraGeometry::tetraBound( unsigned int id, array<double,3> &crn1, array<double,3> &crn2 ) const
+{
+  crn1.fill( 1E30 );
+  crn2.fill( -1E30 );
+  for ( unsigned int i=0;i<4;i++ )
+  {
+    if ( nodes[elements[id].nodes[i]].x < crn1[0] ) crn1[0] = nodes[elements[id].nodes[i]].x;
+    if ( nodes[elements[id].nodes[i]].y < crn1[1] ) crn1[1] = nodes[elements[id].nodes[i]].y;
+    if ( nodes[elements[id].nodes[i]].z < crn1[2] ) crn1[2] = nodes[elements[id].nodes[i]].z;
+    if ( nodes[elements[id].nodes[i]].x > crn2[0] ) crn2[0] = nodes[elements[id].nodes[i]].x;
+    if ( nodes[elements[id].nodes[i]].y > crn2[1] ) crn2[1] = nodes[elements[id].nodes[i]].y;
+    if ( nodes[elements[id].nodes[i]].z > crn2[2] ) crn2[2] = nodes[elements[id].nodes[i]].z;
+  }
 }

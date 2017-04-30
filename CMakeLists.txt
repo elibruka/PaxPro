@@ -124,4 +124,6 @@ install( FILES ${HEADERFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES ${TPPFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 #========================= EXAMPLES ============================================
 add_executable( sphere.out Examples/sphere.cpp )
+add_executable( tetraGeo.out Examples/setupTetraGeo.cpp )
 target_link_libraries( sphere.out ${LIB} paxpro )
+target_link_libraries( tetraGeo.out ${LIB} paxpro )
