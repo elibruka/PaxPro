@@ -7,6 +7,11 @@
 
 using namespace std;
 
+TetraGeometry::~TetraGeometry()
+{
+  delete lut;
+}
+
 void TetraGeometry::load( const char *fname )
 {
   ifstream infile;
@@ -42,6 +47,10 @@ void TetraGeometry::load( const char *fname )
     }
   }
   infile.close();
+
+  delete lut;
+  lut = new HashedTetras(*this);
+  lut->build();
 }
 
 void TetraGeometry::readNodes( ifstream &infile )

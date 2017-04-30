@@ -2,6 +2,7 @@
 #define TETRAGEOMETRY_H
 #include "materialFunction.hpp"
 #include "geometrySimplices.hpp"
+#include "hashTetras.hpp"
 #include <vector>
 #include <fstream>
 #include <armadillo>
@@ -10,6 +11,7 @@ class TetraGeometry: public MaterialFunction
 {
 public:
   TetraGeometry(){};
+  ~TetraGeometry();
 
   /** Load GMSH mesh file */
   void load( const char* fname );
@@ -33,6 +35,8 @@ private:
   std::vector<double> beta;
   std::vector<Tetrahedron> elements;
   std::vector<Node> nodes;
+
+  HashedTetras *lut{nullptr};
 
   /** Reads the nodes from the GMSH mesh file */
   void readNodes( std::ifstream &infile );
