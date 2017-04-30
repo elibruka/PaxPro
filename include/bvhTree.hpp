@@ -26,11 +26,15 @@ private:
   std::array<double,3> crn2;
   BVHTreeNode *left{nullptr};
   BVHTreeNode *right{nullptr};
+  BVHTreeNode *parent{nullptr};
   std::vector<unsigned int> tetraID;
   unsigned int splitDirection{2};
   const TetraGeometry *geo{nullptr};
 
   /** Void split */
   void split();
+
+  /** Return true if it is inside the bounding box */
+  bool isInside( double x, double y, double z ) const;
 };
 #endif

@@ -30,7 +30,7 @@ public:
   const std::vector<Tetrahedron>& getTetras() const{ return elements; };
 
   /** Return the tetrahedron with with given id */
-  const Tetrahedron& tetra( unsigned int id ){ return elements[id]; };
+  const Tetrahedron& tetra( unsigned int id ) const { return elements[id]; };
 
   /** Return the center of mass of tetrahedon id */
   void centerOfMass( unsigned int id, double com[3] ) const;
@@ -43,6 +43,9 @@ public:
 
   /** Computes the bounding box of individual elements */
   void tetraBound( unsigned int id, std::array<double,3> &crn1, std::array<double,3> &crn2 ) const;
+
+  /** Returns true if the point is inside the tetrahedron */
+  bool isInside( double x, double y, double z, const Tetrahedron &tetra ) const;
 private:
   std::vector<double> delta;
   std::vector<double> beta;
@@ -59,9 +62,6 @@ private:
 
   /** Computes the barycentric coordinate wrt tetra*/
   void barycentric( double x, double y, double z, const Tetrahedron &tetra, arma::vec &bary ) const;
-
-  /** Returns true if the point is inside the tetrahedron */
-  bool isInside( double x, double y, double z, const Tetrahedron &tetra ) const;
 
   /** Reads the physical entities */
   void readPhysicalEntities( std::ifstream &infile );

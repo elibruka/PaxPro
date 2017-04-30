@@ -34,6 +34,11 @@ void BVHTreeNode::split()
 {
   left = new BVHTreeNode();
   right = new BVHTreeNode();
+  left->parent = this;
+  right->parent = this;
+  left->geo = geo;
+  right->geo = geo;
+
   left->crn1 = crn1;
   left->crn2 = crn2;
   right->crn1 = crn1;
@@ -92,4 +97,37 @@ void BVHTreeNode::insert( unsigned int id, array<double,3> &newcrn1, array<doubl
     crn1[i] = newcrn1[i] < crn1[i] ? newcrn1[i]:crn1[i];
     crn2[i] = newcrn2[i] > crn2[i] ? newcrn2[i]:crn2[i];
   }
+}
+
+unsigned int BVHTreeNode::getID( double x, double y, double z ) const
+{
+  if ( tetraID.size() == 1 )
+  {
+    if ( geo->isInside(x,y,z,geo->tetra(tetraID[0]) ) )
+    {
+      // Return ID
+      return tetraID[0];
+    }
+    else
+    {
+      // Is inside the bounding box of the left branch, but not inside the tetrahedron
+      // Then it has to also be inside the bounding box in the right branch
+      return parent->right->getID(x,y,z);
+    }
+  }
+  if ( left->isInside(x,y,z) )
+  {
+    // If is inside the left branch, continue further
+    return left->getID(x,y,z);
+  }
+
+  // Else: Check-out the right branch (it has to be inside the bounding box of the rigth branch)
+  return right->getID(x,y,z);
+}
+
+bool BVHTreeNode::isInside( double x, double y, double z ) const
+{
+  return ( x > crn1[0] ) && ( x < crn2[0] ) && \
+         ( y > crn1[1] ) && ( y < crn2[1] ) && \
+         ( z > crn1[2] ) && ( z < crn2[2] );
 }
