@@ -12,6 +12,7 @@ struct Node
 struct Tetrahedron
 {
   unsigned int id;
+  unsigned int physicalEntity;
   std::array<unsigned int,4> nodes;
 };
 #endif

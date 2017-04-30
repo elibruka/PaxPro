@@ -90,14 +90,17 @@ void TetraGeometry::readElements( ifstream &infile )
     int numberOfTags;
     stringstream ss(line);
     ss >> elemNumber >> elemType >> numberOfTags;
-    if ( elemType != 4 ) continue;
+    if (( elemType != 4 ) || (numberOfTags == 0 )) continue;
+    int physicalEntity;
+    ss >> physicalEntity;
     int dummy;
-    for ( unsigned int i=0;i<numberOfTags;i++ )
+    for ( unsigned int i=0;i<numberOfTags-1;i++ )
     {
       ss >> dummy;
     }
     Tetrahedron tetra;
     tetra.id = elemNumber;
+    tetra.physicalEntity = physicalEntity;
     ss >> tetra.nodes[0] >> tetra.nodes[1] >> tetra.nodes[2] >> tetra.nodes[3];
     elements.push_back(tetra);
   }

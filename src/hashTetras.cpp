@@ -106,3 +106,8 @@ void HashedTetras::printStatistics() const
   cout << "Average number of tetrahedrons in bucket: " << average << endl;
   cout << "=================================================================\n";
 }
+
+const vector<unsigned int>& HashedTetras::getBucket( double x, double y, double z ) const
+{
+  return buckets[bucketIndex(x,y,z)];
+}

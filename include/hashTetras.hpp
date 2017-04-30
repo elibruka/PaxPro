@@ -13,6 +13,9 @@ public:
 
   /** Print info about the table */
   void printStatistics() const;
+
+  /** Return the bucket where x,y,z belongs */
+  const std::vector<unsigned int>& getBucket( double x, double y, double z ) const;
 private:
   const TetraGeometry* geo{nullptr};
   std::vector< std::vector<unsigned int> > buckets;
