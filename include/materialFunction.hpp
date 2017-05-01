@@ -4,6 +4,6 @@
 class MaterialFunction
 {
 public:
-  virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const = 0;
+  virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) = 0;
 };
 #endif

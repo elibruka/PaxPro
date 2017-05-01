@@ -2,11 +2,12 @@
 #define TETRAGEOMETRY_H
 #include "materialFunction.hpp"
 #include "geometrySimplices.hpp"
-#include "hashTetras.hpp"
+#include "bvhTree.hpp"
 #include <vector>
 #include <fstream>
 #include <armadillo>
 #include <map>
+#include <array>
 
 struct XrayMatProperty
 {
@@ -24,7 +25,7 @@ public:
   void load( const char* fname );
 
   /** Returns the X-ray material functions */
-  void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const override{};
+  void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) override;
 
   /** Returns the array of tetrahedrons */
   const std::vector<Tetrahedron>& getTetras() const{ return elements; };
@@ -36,7 +37,7 @@ public:
   void centerOfMass( unsigned int id, double com[3] ) const;
 
   /** Get the bounding box */
-  void boundingBox( double crn1[3], double crn2[3] ) const;
+  void boundingBox( std::array<double,3> &crn1, std::array<double,3> &crn2 ) const;
 
   /** Set X-ray material properties */
   void setMatProp( const std::map<std::string,XrayMatProperty> &matprops );
@@ -52,7 +53,7 @@ private:
   std::vector<Tetrahedron> elements;
   std::vector<Node> nodes;
 
-  HashedTetras *lut{nullptr};
+  BVHTreeNode *bvh{nullptr};
 
   /** Reads the nodes from the GMSH mesh file */
   void readNodes( std::ifstream &infile );
@@ -68,6 +69,8 @@ private:
 
   /** Checks that imported mesh is consistent */
   void checkImportedMesh();
+
+  unsigned int previousID{0};
 
   std::map<std::string,unsigned int> physicalEntityNumber;
 };

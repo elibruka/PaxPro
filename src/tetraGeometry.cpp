@@ -10,7 +10,7 @@ using namespace std;
 
 TetraGeometry::~TetraGeometry()
 {
-  delete lut;
+  delete bvh;
 }
 
 void TetraGeometry::load( const char *fname )
@@ -54,9 +54,10 @@ void TetraGeometry::load( const char *fname )
   infile.close();
   checkImportedMesh();
 
-  delete lut;
-  lut = new HashedTetras(*this);
-  lut->build();
+  delete bvh;
+  bvh = new BVHTreeNode();
+  bvh->build( *this );
+  bvh->statistics();
 }
 
 void TetraGeometry::readNodes( ifstream &infile )
@@ -96,6 +97,7 @@ void TetraGeometry::readElements( ifstream &infile )
   infile >> numberOfElem;
   string line;
   elements.resize(0);
+  unsigned int id = 0;
   while( getline(infile, line) )
   {
     if ( line.find("$EndElements") != string::npos ) return;
@@ -113,9 +115,13 @@ void TetraGeometry::readElements( ifstream &infile )
       ss >> dummy;
     }
     Tetrahedron tetra;
-    tetra.id = elemNumber;
+    tetra.id = id++;
     tetra.physicalEntity = physicalEntity;
     ss >> tetra.nodes[0] >> tetra.nodes[1] >> tetra.nodes[2] >> tetra.nodes[3];
+    for ( unsigned int i=0;i<4;i++ )
+    {
+      tetra.nodes[i] -= 1;
+    }
     elements.push_back(tetra);
   }
 }
@@ -139,6 +145,15 @@ void TetraGeometry::barycentric( double x, double y, double z, const Tetrahedron
 
 bool TetraGeometry::isInside( double x, double y, double z, const Tetrahedron &tetra ) const
 {
+  /*
+  array<double,3> c1, c2;
+  tetraBound( tetra.id, c1, c2 );
+  cout << c1[0] << " " << c1[1] << " " << c1[2] << endl;
+  cout << c2[0] << " " << c2[1] << " " << c2[2] << endl;
+  return ( x > c1[0] ) && ( x < c2[0] ) && \
+         ( y > c1[1] ) && ( y < c2[1] ) && \
+         ( z > c1[2] ) && ( z < c2[2] );*/
+
   arma::vec bary;
   barycentric(x,y,z,tetra,bary);
   for ( unsigned int i=0;i<3;i++ )
@@ -148,7 +163,7 @@ bool TetraGeometry::isInside( double x, double y, double z, const Tetrahedron &t
   return true;
 }
 
-void TetraGeometry::boundingBox( double crn1[3], double crn2[3] ) const
+void TetraGeometry::boundingBox( array<double,3> &crn1, array<double,3> &crn2 ) const
 {
   for ( unsigned int i=0;i<3;i++ )
   {
@@ -264,4 +279,15 @@ void TetraGeometry::tetraBound( unsigned int id, array<double,3> &crn1, array<do
     if ( nodes[elements[id].nodes[i]].y > crn2[1] ) crn2[1] = nodes[elements[id].nodes[i]].y;
     if ( nodes[elements[id].nodes[i]].z > crn2[2] ) crn2[2] = nodes[elements[id].nodes[i]].z;
   }
+}
+
+void TetraGeometry::getXrayMatProp( double x, double y, double z, double &matdelta, double &matbeta )
+{
+  if ( !isInside(x,y,z, elements[previousID]) )
+  {
+    previousID = bvh->getID(x,y,z);
+  }
+
+  matdelta = delta[elements[previousID].physicalEntity];
+  matbeta = beta[elements[previousID].physicalEntity];
 }

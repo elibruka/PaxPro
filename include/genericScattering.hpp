@@ -13,7 +13,7 @@ public:
   GenericScattering( const char* name );
   virtual ~GenericScattering();
 
-  void setMaterial(  const MaterialFunction &mat ){ material = &mat; };
+  void setMaterial( MaterialFunction &mat ){ material = &mat; };
 
   /** Set the waist of the Gaussian beam */
   void setBeamWaist( double waist ){ gbeam.setWaist(waist); };
@@ -55,7 +55,7 @@ public:
   bool realTimeVisualization{false};
   bool useFFTSolver{true};
 private:
-  const MaterialFunction *material{NULL};
+  MaterialFunction *material{NULL};
   post::ExitField ef;
   post::ExitIntensity ei;
   post::ExitPhase ep;
