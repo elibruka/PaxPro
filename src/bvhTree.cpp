@@ -136,7 +136,7 @@ int BVHTreeNode::getID( double x, double y, double z )
   unsigned int id = 0;
   while ( true )
   {
-
+    assert( current != nullptr );
     if (( current->left==nullptr ) && ( current->right==nullptr ))
     {
       // Is a leaf node

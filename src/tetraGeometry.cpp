@@ -288,16 +288,16 @@ void TetraGeometry::tetraBound( unsigned int id, array<double,3> &crn1, array<do
 void TetraGeometry::getXrayMatProp( double x, double y, double z, double &matdelta, double &matbeta )
 {
   assert( boundingBoxComputed );
-  if (( x < bboxCrn1[0] ) || ( x > bboxCrn2[0] ) || \
-      ( y < bboxCrn1[1] ) || ( y > bboxCrn2[1] ) || \
-      ( z < bboxCrn1[2] ) || ( z > bboxCrn2[2] ))
+  if (( x <= bboxCrn1[0] ) || ( x >= bboxCrn2[0] ) || \
+      ( y <= bboxCrn1[1] ) || ( y >= bboxCrn2[1] ) || \
+      ( z <= bboxCrn1[2] ) || ( z >= bboxCrn2[2] ))
     {
-      cout << "Warning! Requested coordinate is outside the bounding box!\n";
+      //cout << "Warning! Requested coordinate is outside the bounding box!\n";
       matdelta = 0.0;
       matbeta = 0.0;
       return;
     }
-    
+
   if ( !isInside(x,y,z, elements[previousID]) )
   {
     assert( bvh != nullptr );
