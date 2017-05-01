@@ -73,5 +73,12 @@ private:
   unsigned int previousID{0};
 
   std::map<std::string,unsigned int> physicalEntityNumber;
+
+  bool boundingBoxComputed{false};
+  std::array<double,3> bboxCrn1;
+  std::array<double,3> bboxCrn2;
+
+  /** Update the bounding box */
+  void boundingBox();
 };
 #endif

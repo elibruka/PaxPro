@@ -53,6 +53,7 @@ void TetraGeometry::load( const char *fname )
   }
   infile.close();
   checkImportedMesh();
+  boundingBox();
 
   delete bvh;
   bvh = new BVHTreeNode();
@@ -116,7 +117,7 @@ void TetraGeometry::readElements( ifstream &infile )
     }
     Tetrahedron tetra;
     tetra.id = id++;
-    tetra.physicalEntity = physicalEntity;
+    tetra.physicalEntity = physicalEntity-1;
     ss >> tetra.nodes[0] >> tetra.nodes[1] >> tetra.nodes[2] >> tetra.nodes[3];
     for ( unsigned int i=0;i<4;i++ )
     {
@@ -145,15 +146,6 @@ void TetraGeometry::barycentric( double x, double y, double z, const Tetrahedron
 
 bool TetraGeometry::isInside( double x, double y, double z, const Tetrahedron &tetra ) const
 {
-  /*
-  array<double,3> c1, c2;
-  tetraBound( tetra.id, c1, c2 );
-  cout << c1[0] << " " << c1[1] << " " << c1[2] << endl;
-  cout << c2[0] << " " << c2[1] << " " << c2[2] << endl;
-  return ( x > c1[0] ) && ( x < c2[0] ) && \
-         ( y > c1[1] ) && ( y < c2[1] ) && \
-         ( z > c1[2] ) && ( z < c2[2] );*/
-
   arma::vec bary;
   barycentric(x,y,z,tetra,bary);
   for ( unsigned int i=0;i<3;i++ )
@@ -163,22 +155,30 @@ bool TetraGeometry::isInside( double x, double y, double z, const Tetrahedron &t
   return true;
 }
 
-void TetraGeometry::boundingBox( array<double,3> &crn1, array<double,3> &crn2 ) const
+void TetraGeometry::boundingBox()
 {
   for ( unsigned int i=0;i<3;i++ )
   {
-    crn1[i] = 1E30;
-    crn2[i] = -1E30;
+    bboxCrn1[i] = 1E30;
+    bboxCrn2[i] = -1E30;
   }
   for ( unsigned int i=0;i<nodes.size(); i++ )
   {
-    if ( nodes[i].x < crn1[0] ) crn1[0] = nodes[i].x;
-    if ( nodes[i].y < crn1[1] ) crn1[1] = nodes[i].y;
-    if ( nodes[i].z < crn1[2] ) crn1[2] = nodes[i].z;
-    if ( nodes[i].x > crn2[0] ) crn2[0] = nodes[i].x;
-    if ( nodes[i].y > crn2[1] ) crn2[1] = nodes[i].y;
-    if ( nodes[i].z > crn2[2] ) crn2[2] = nodes[i].z;
+    if ( nodes[i].x < bboxCrn1[0] ) bboxCrn1[0] = nodes[i].x;
+    if ( nodes[i].y < bboxCrn1[1] ) bboxCrn1[1] = nodes[i].y;
+    if ( nodes[i].z < bboxCrn1[2] ) bboxCrn1[2] = nodes[i].z;
+    if ( nodes[i].x > bboxCrn2[0] ) bboxCrn2[0] = nodes[i].x;
+    if ( nodes[i].y > bboxCrn2[1] ) bboxCrn2[1] = nodes[i].y;
+    if ( nodes[i].z > bboxCrn2[2] ) bboxCrn2[2] = nodes[i].z;
   }
+  boundingBoxComputed = true;
+}
+
+void TetraGeometry::boundingBox( array<double,3> &crn1, array<double,3> &crn2 ) const
+{
+  assert( boundingBoxComputed );
+  crn1 = bboxCrn1;
+  crn2 = bboxCrn2;
 }
 
 void TetraGeometry::centerOfMass( unsigned int id, double com[3] ) const
@@ -283,6 +283,17 @@ void TetraGeometry::tetraBound( unsigned int id, array<double,3> &crn1, array<do
 
 void TetraGeometry::getXrayMatProp( double x, double y, double z, double &matdelta, double &matbeta )
 {
+  assert( boundingBoxComputed );
+  if (( x < bboxCrn1[0] ) || ( x > bboxCrn2[0] ) || \
+      ( y < bboxCrn1[1] ) || ( y > bboxCrn2[1] ) || \
+      ( z < bboxCrn1[2] ) || ( z > bboxCrn2[2] ))
+    {
+      cout << "Warning! Requested coordinate is outside the bounding box!\n";
+      matdelta = 0.0;
+      matbeta = 0.0;
+      return;
+    }
+
   if ( !isInside(x,y,z, elements[previousID]) )
   {
     previousID = bvh->getID(x,y,z);

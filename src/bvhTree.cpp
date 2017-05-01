@@ -139,11 +139,10 @@ unsigned int BVHTreeNode::getID( double x, double y, double z )
 
     if (( current->left==nullptr ) && ( current->right==nullptr ))
     {
-      current->printBoundingBox();
       // Is a leaf node
       if ( geo->isInside( x,y,z, geo->tetra(current->tetraID[0])) )
       {
-        id = tetraID[0];
+        id = current->tetraID[0];
         break;
       }
       current = current->parent;
