@@ -1,4 +1,6 @@
 #include "genericScattering.hpp"
+#include "tetraGeometry.hpp"
+#include <array>
 #include <stdexcept>
 #define PRINT_DEBUG
 
@@ -101,6 +103,7 @@ void GenericScattering::getXrayMatProp( double x, double y, double z, double &de
     beta = 0.0;
     return;
   }
+  assert( material != nullptr );
   material->getXrayMatProp( x, y, z, delta, beta );
 }
 
@@ -152,4 +155,32 @@ void GenericScattering::printInfo() const
   cout << "Gaussian beam waist: " << gbeam.getWaist() << endl;
   cout << "Scattering angle: [" << ff.getMinScatteringAngle() << "," << ff.getMaxScatteringAngle() << "]\n";
   cout << "==================================================================\n";
+}
+
+void GenericScattering::setMaterial( TetraGeometry &mat )
+{
+  material = &mat;
+
+  // Set the maximum and minimum boundaries
+  array<double,3> crn1;
+  array<double,3> crn2;
+  mat.boundingBox(crn1,crn2);
+
+  xmin = crn1[0];
+  ymin = crn1[1];
+  zmin = crn1[2];
+  xmax = crn2[0];
+  ymax = crn2[1];
+  zmax = crn2[2];
+}
+
+void GenericScattering::setNumberOfSteps( unsigned int Nx, unsigned int Ny, unsigned int Nz )
+{
+  if ( material == nullptr )
+  {
+    throw( runtime_error("The material has to be set before the discretization as the TetraGeometry changes the bounding box!") );
+  }
+  dx = (xmax-xmin)/Nx;
+  dy = (ymax-ymin)/Ny;
+  dz = (zmax-zmin)/Nz;
 }

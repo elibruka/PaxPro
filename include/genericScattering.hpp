@@ -7,13 +7,18 @@
 #include "materialFunction.hpp"
 #include "alternatingDirectionSolver.hpp"
 
+class TetraGeometry;
 class GenericScattering: public ParaxialSimulation
 {
 public:
   GenericScattering( const char* name );
   virtual ~GenericScattering();
 
+  /** Set function that specifies the material */
   void setMaterial( MaterialFunction &mat ){ material = &mat; };
+
+  /** Set material function based on a tetrahedron mesh */
+  void setMaterial( TetraGeometry &mat );
 
   /** Set the waist of the Gaussian beam */
   void setBeamWaist( double waist ){ gbeam.setWaist(waist); };
@@ -29,6 +34,9 @@ public:
 
   /** Prints all the attributes */
   void printInfo() const;
+
+  /** Set the number of discretization points */
+  void setNumberOfSteps( unsigned int Nx, unsigned int Ny, unsigned int Nz );
 
   // Attributes
   unsigned int exportNx{512};
@@ -55,7 +63,7 @@ public:
   bool realTimeVisualization{false};
   bool useFFTSolver{true};
 private:
-  MaterialFunction *material{NULL};
+  MaterialFunction *material{nullptr};
   post::ExitField ef;
   post::ExitIntensity ei;
   post::ExitPhase ep;

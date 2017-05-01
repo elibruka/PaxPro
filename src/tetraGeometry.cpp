@@ -10,7 +10,7 @@ using namespace std;
 
 TetraGeometry::~TetraGeometry()
 {
-  delete bvh;
+  delete bvh; bvh=nullptr;
 }
 
 void TetraGeometry::load( const char *fname )
@@ -78,6 +78,10 @@ void TetraGeometry::readNodes( ifstream &infile )
     int indx;
     Node newnode;
     ss >> indx >> newnode.x >> newnode.y >> newnode.z;
+
+    newnode.x *= lengthScale;
+    newnode.y *= lengthScale;
+    newnode.z *= lengthScale;
 
     #ifdef TETRA_DEBUG
       cout << "x="<<newnode.x << " y=" << newnode.y << " z=" << newnode.z << endl;
@@ -293,10 +297,19 @@ void TetraGeometry::getXrayMatProp( double x, double y, double z, double &matdel
       matbeta = 0.0;
       return;
     }
-
+    
   if ( !isInside(x,y,z, elements[previousID]) )
   {
-    previousID = bvh->getID(x,y,z);
+    assert( bvh != nullptr );
+    int newID = bvh->getID(x,y,z);
+    if ( newID < 0 )
+    {
+      // Could not find any tetrahedron, treat as vacuum
+      matdelta = 0.0;
+      matbeta = 0.0;
+      return;
+    }
+    previousID = newID;
   }
 
   matdelta = delta[elements[previousID].physicalEntity];

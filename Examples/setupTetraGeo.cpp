@@ -25,7 +25,7 @@ int main( int argc, char** argv )
     XrayMatProperty substrate;
     substrate.delta = 1E-5;
     substrate.beta = 8E-7;
-    matprop["subsrate"]  = substrate;
+    matprop["substrate"]  = substrate;
 
     XrayMatProperty surroundings;
     //surroundings.delta = 0.0;

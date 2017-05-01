@@ -1,49 +1,33 @@
 import sys
 sys.path.append("/home/dkleiven/Documents/PaxPro/PythonWrapper")
+sys.path.append("/usr/local/lib")
 import pypaxpro as pypax
 
-class Sphere(pypax.MaterialFunction):
-    def __init__(self, radius):
-        pypax.MaterialFunction.__init__(self)
-        self.r = radius
-
-    def getXrayMatProp( self, x, y, z, delta, beta ):
-        '''
-        Override the get X-ray material properties function
-        '''
-        rSq = x**2 + y**2 + z**2
-        if ( rSq < self.r**2 ):
-            delta = 8.9E-6
-            beta = 7E-7
-        else:
-            delta = 0.0
-            beta = 0.0
-
 def main():
-    r = 500.0
-    xmin = -1.5*r
-    xmax = 1.5*r
-    zmin = -1.05*r
-    zmax = 1.05*r
-
-    dx = (xmax-xmin)/1024
-    dz = (zmax-zmin)/1024
-
+    r = 100.0
     simulator = pypax.GenericScattering("SphereScattering")
     simulator.description = "X-ray scattering from a sphere using the Python interface!"
     simulator.setBeamWaist(400.0*r) # Set very large to mimic a plane wave
     simulator.setMaxScatteringAngle(0.05) # Maximum scattering angle that will be stored
 
-    # Set the simulation domain
-    simulator.xmin = xmin
-    simulator.xmax = xmax
-    simulator.ymin = xmin
-    simulator.ymax = xmax
-    simulator.zmin = zmin
-    simulator.zmax = zmax
-    simulator.dx = dx
-    simulator.dy = dx
-    simulator.dz = dz
+    # Define the material properties belonging to different regions in the msh file
+    xrayMatProp = pypax.XrayMatProperty()
+    xrayMatProp.delta = 0.0
+    xrayMatProp.beta = 0.0
+
+    regionMat = pypax.region()
+    regionMat["void"] = xrayMatProp
+    xrayMatProp.delta = 4.9E-5
+    xrayMatProp.beta = 8.9E-6
+    regionMat["sphere"] = xrayMatProp
+    xrayMatProp.delta = 5E-5
+    xrayMatProp.beta = 7E-7
+    regionMat["substrate"] = xrayMatProp
+
+    material = pypax.TetraGeometry()
+    material.lengthScale = 100.0 # Set the length scale
+    material.load( "Geometries/all.msh" )
+    material.setMatProp( regionMat )
 
     # If the profile is not needed it is recommended to downscale the 3D matrix stored to reduce
     # the memory requirements
@@ -56,13 +40,14 @@ def main():
     simulator.wavelength = 0.1569
     simulator.FFTPadLength = 32768
 
-    scatterer = Sphere(r)
-    simulator.setMaterial( scatterer )
+    simulator.setMaterial( material )
+    simulator.setNumberOfSteps( 256, 256, 256 )
 
     simulator.solve()
 
     ctlfile = pypax.ControlFile("data/spherePython")
     simulator.save(ctlfile)
+
 
 if __name__ == "__main__":
     main()

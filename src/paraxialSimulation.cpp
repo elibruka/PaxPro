@@ -25,42 +25,45 @@ yDisc(new Disctretization), name(name){};
 
 ParaxialSimulation::~ParaxialSimulation()
 {
-  delete xDisc; xDisc = NULL;
-  delete zDisc; zDisc = NULL;
-  delete yDisc; yDisc = NULL;
+  delete xDisc; xDisc = nullptr;
+  delete zDisc; zDisc = nullptr;
+  delete yDisc; yDisc = nullptr;
 
   if ( solverInitializedViaInit )
   {
-    delete solver; solver = NULL;
+    delete solver; solver = nullptr;
   }
-  delete farFieldModulus; farFieldModulus = NULL;
-  delete file; file = NULL;
-  delete maingroup; maingroup = NULL;
+  delete farFieldModulus; farFieldModulus = nullptr;
+  delete file; file = nullptr;
+  delete maingroup; maingroup = nullptr;
 }
 
 void ParaxialSimulation::solve()
 {
+  assert( solver != nullptr );
   solver->solve();
 }
 
 void ParaxialSimulation::step()
 {
+  assert( solver != nullptr );
   solver->step();
 }
 
 void ParaxialSimulation::reset()
 {
+  assert( solver != nullptr );
   solver->reset();
 }
 
 void ParaxialSimulation::verifySolverReady() const
 {
-  if ( solver == NULL )
+  if ( solver == nullptr )
   {
     throw ( runtime_error("No solver specified!"));
   }
 
-  if ( src == NULL )
+  if ( src == nullptr )
   {
     throw ( runtime_error("No source specified!"));
   }
@@ -133,12 +136,12 @@ void ParaxialSimulation::setSolver( Solver &solv )
 
 void ParaxialSimulation::save( ControlFile &ctl )
 {
-  if ( solver == NULL )
+  if ( solver == nullptr )
   {
     throw ( runtime_error("No solver specified!\n"));
   }
 
-  if ( src == NULL )
+  if ( src == nullptr )
   {
     throw ( runtime_error("No source specified!\n") );
   }
@@ -146,7 +149,7 @@ void ParaxialSimulation::save( ControlFile &ctl )
   string h5fname = fname+".h5";
   string jsonfname = fname+".json";
   vector<string> dsets;
-  if ( file != NULL ) delete file;
+  if ( file != nullptr ) delete file;
   file = new H5::H5File( h5fname.c_str(), H5F_ACC_TRUNC );
   maingroup = new H5::Group( file->createGroup(groupname+"/") );
   uid = ctl.getUID();
@@ -373,7 +376,7 @@ void ParaxialSimulation::addAttribute( H5::DataSet &ds, const char* name, int va
 void ParaxialSimulation::setBoundaryConditions( const ParaxialSource &source )
 {
 
-  if ( solver == NULL )
+  if ( solver == nullptr )
   {
     throw ( runtime_error("Solver needs to be set before boundary conditions!") );
   }
@@ -468,7 +471,7 @@ ParaxialSimulation& ParaxialSimulation::addPostProcessingModule( post::FarField 
 
 void ParaxialSimulation::setGroupAttributes()
 {
-  if ( maingroup == NULL ) return;
+  if ( maingroup == nullptr ) return;
 
   // Create a dataspace
   H5::DataSpace attribSpace(H5S_SCALAR);

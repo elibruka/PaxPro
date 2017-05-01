@@ -130,7 +130,7 @@ void BVHTreeNode::insert( unsigned int id, array<double,3> &newcrn1, array<doubl
   }
 }
 
-unsigned int BVHTreeNode::getID( double x, double y, double z )
+int BVHTreeNode::getID( double x, double y, double z )
 {
   BVHTreeNode *current = this;
   unsigned int id = 0;
@@ -161,9 +161,15 @@ unsigned int BVHTreeNode::getID( double x, double y, double z )
     else
     {
       // It should never return for the second time to the root node
-      assert( !( ( current->parent == nullptr ) && ( current->hasCheckedLeft ) && ( current->hasCheckedRight ) ));
-      assert( !((current->parent==nullptr) && current->hasCheckedLeft && !current->right->isInside(x,y,z)) );
-      assert( !((current->parent==nullptr) && current->hasCheckedRight && !current->left->isInside(x,y,z)) );
+      bool didNotFindAnything = ( ( current->parent == nullptr ) && ( current->hasCheckedLeft ) && ( current->hasCheckedRight ) ) \
+      || ((current->parent==nullptr) && current->hasCheckedLeft && !current->right->isInside(x,y,z)) ||
+      ((current->parent==nullptr) && current->hasCheckedRight && !current->left->isInside(x,y,z));
+
+      if ( didNotFindAnything )
+      {
+        id = -1;
+        break;
+      }
 
       current->hasCheckedLeft = false;
       current->hasCheckedRight = false;

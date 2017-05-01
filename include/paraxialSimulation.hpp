@@ -168,7 +168,7 @@ public:
   virtual void save( ControlFile &ctl );
 
   /** Return a border tracker object. Only relevant for geometries that tracks the border i.e. waveguides */
-  virtual BorderTracker* getBorderTracker(){ return NULL; };
+  virtual BorderTracker* getBorderTracker(){ return nullptr; };
 
   /** Pad the exit signal */
   virtual cdouble padExitField( double x, double z ) const { return farParam.padValue; };
@@ -176,16 +176,16 @@ public:
   /** Add a description of the simulation that will be added in the HDF5 file */
   std::string description{""};
 protected:
-  Solver *solver{NULL};
+  Solver *solver{nullptr};
   Disctretization *xDisc; // Transverse
   Disctretization *zDisc; // Along optical axis
   Disctretization *yDisc; // Vertical
-  arma::vec *farFieldModulus{NULL};
+  arma::vec *farFieldModulus{nullptr};
   double wavenumber;
   std::string name;
-  const ParaxialSource* src{NULL};
-  H5::H5File* file{NULL};
-  H5::Group *maingroup{NULL};
+  const ParaxialSource* src{nullptr};
+  H5::H5File* file{nullptr};
+  H5::Group *maingroup{nullptr};
   std::string groupname{"/data/"};
   std::vector<std::string> dsetnames;
   bool solverInitializedViaInit{false};

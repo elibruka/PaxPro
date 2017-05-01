@@ -127,6 +127,7 @@ void FFTSolver3D::propagate()
 void FFTSolver3D::refraction( unsigned int step )
 {
   assert ( step > 0 );
+  assert( guide != nullptr );
   double stepZ = guide->longitudinalDiscretization().step;
   double wavenumber = guide->getWavenumber();
   double z1 = guide->getZ( step );
@@ -136,8 +137,7 @@ void FFTSolver3D::refraction( unsigned int step )
 
   // FFTW3: Divide by length to normalize
   double normalization = prevSolution->n_rows*prevSolution->n_cols;
-
-  #pragma omp parallel for
+  //#pragma omp parallel for
   for ( unsigned int i=0;i<prevSolution->n_cols*prevSolution->n_rows; i++ )
   {
     unsigned int row = i%prevSolution->n_rows;
@@ -145,10 +145,12 @@ void FFTSolver3D::refraction( unsigned int step )
 
     double x = guide->getX(col);
     double y = guide->getY(row);
-    double delta, beta, deltaPrev, betaPrev;
+    double delta=0.0;
+    double beta=0.0;
+    double deltaPrev=0.0;
+    double betaPrev=0.0;
     guide->getXrayMatProp( x, y, z1, delta, beta );
     guide->getXrayMatProp( x, y, z0, deltaPrev, betaPrev );
-
     if (( abs(delta-deltaPrev) > ZERO ) || ( abs(beta-betaPrev) > ZERO ))
     {
         // Wave has crossed a border

@@ -13,8 +13,8 @@ public:
   /** Builds the BVH tree */
   void build( const TetraGeometry &geo );
 
-  /** Returns the ID of the tetrahedron */
-  unsigned int getID( double x, double y, double z );
+  /** Returns the ID of the tetrahedron. Returns -1 if it did not find a tetrahedron */
+  int getID( double x, double y, double z );
 
   /** Computes the new volume of the bounding box if a box defined by crn1 and crn2 is added */
   double newVolume( std::array<double,3> &crn1, std::array<double,3> &crn2 ) const;

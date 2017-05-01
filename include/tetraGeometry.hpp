@@ -47,6 +47,9 @@ public:
 
   /** Returns true if the point is inside the tetrahedron */
   bool isInside( double x, double y, double z, const Tetrahedron &tetra ) const;
+
+  /** Relevant length scale: all coordinates in the .msh file are multiplied with this number */
+  double lengthScale{1.0};
 private:
   std::vector<double> delta;
   std::vector<double> beta;
