@@ -12,3 +12,4 @@ pypaxpro/*_*
 pypaxpro/pypaxpro.py
 pypaxpro/pypaxpro.pyc
 src/CMakeFiles/progress.marks
+build/*
