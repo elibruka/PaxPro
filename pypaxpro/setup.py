@@ -9,7 +9,7 @@ sources=["src/absorber.cpp", "src/cladding.cpp", "src/controlFile.cpp", "src/cra
 "src/refractiveIndex.cpp", "src/solver.cpp", "src/solver1D.cpp", "src/solver2D.cpp", "src/solver3D.cpp", "src/stdFDsolver.cpp",
 "src/transmittivity.cpp", "src/waveGuideFDSimulation.cpp", "src/borderTracker.cpp", "src/curvedWaveGuide2D.cpp",
 "src/alternatingDirectionSolver.cpp", "src/tetraGeometry.cpp", "src/bvhTree.cpp", "pypaxpro/pypaxpro.i"],
-libraries=["armadillo","jsoncpp","hdf5_hl_cpp","lapack","gsl","gslcblas","visa","sfml-window","sfml-graphics",
+libraries=["armadillo","jsoncpp", "hdf5_cpp","hdf5_hl_cpp", "lapack","gsl","gslcblas","visa","sfml-window","sfml-graphics",
 "fftw3_omp"],
 extra_compile_args=["-std=c++11","-fopenmp"],
 library_dirs=["/usr/local/lib","/usr/lib", "/usr/lib64"]
