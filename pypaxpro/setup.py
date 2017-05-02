@@ -11,7 +11,7 @@ sources=["src/absorber.cpp", "src/cladding.cpp", "src/controlFile.cpp", "src/cra
 "src/alternatingDirectionSolver.cpp", "src/tetraGeometry.cpp", "src/bvhTree.cpp", "pypaxpro/pypaxpro.i"],
 libraries=["armadillo","jsoncpp","hdf5_hl_cpp","lapack","gsl","gslcblas","visa","sfml-window","sfml-graphics",
 "fftw3_omp"],
-extra_compile_args=["-fopenmp"],
+extra_compile_args=["-std=c++11","-fopenmp"],
 library_dirs=["/usr/local/lib","/usr/lib", "/usr/lib64"]
 )
 
