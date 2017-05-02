@@ -13,6 +13,26 @@ TetraGeometry::~TetraGeometry()
   delete bvh; bvh=nullptr;
 }
 
+TetraGeometry::TetraGeometry( const TetraGeometry &other )
+{
+  delta = other.delta;
+  beta = other.beta;
+  elements = other.elements;
+  nodes = other.nodes;
+  if ( other.bvh != nullptr )
+  {
+    bvh = new BVHTreeNode(*other.bvh);
+    #ifdef TETRA_DEBUG
+      bvh->statistics();
+    #endif
+  }
+  previousID = other.previousID;
+  physicalEntityNumber = other.physicalEntityNumber;
+  boundingBoxComputed = other.boundingBoxComputed;
+  bboxCrn1 = other.bboxCrn1;
+  bboxCrn2 = other.bboxCrn2;
+}
+
 void TetraGeometry::load( const char *fname )
 {
   ifstream infile;

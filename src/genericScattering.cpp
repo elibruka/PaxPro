@@ -2,7 +2,8 @@
 #include "tetraGeometry.hpp"
 #include <array>
 #include <stdexcept>
-#define PRINT_DEBUG
+#include <omp.h>
+//#define PRINT_DEBUG
 
 using namespace std;
 GenericScattering::GenericScattering( const char* name ): ParaxialSimulation(name)
@@ -13,6 +14,11 @@ GenericScattering::GenericScattering( const char* name ): ParaxialSimulation(nam
 GenericScattering::~GenericScattering()
 {
   delete reference; reference=NULL;
+
+  for ( unsigned int i=0;i<materialCopies.size();i++ )
+  {
+    delete materialCopies[i]; materialCopies[i] = nullptr;
+  }
 }
 
 void GenericScattering::setMaxScatteringAngle( double anglemax )
@@ -103,8 +109,10 @@ void GenericScattering::getXrayMatProp( double x, double y, double z, double &de
     beta = 0.0;
     return;
   }
-  assert( material != nullptr );
-  material->getXrayMatProp( x, y, z, delta, beta );
+  //assert( material != nullptr );
+  //material->getXrayMatProp( x, y, z, delta, beta );
+  assert( materialCopies.size() > omp_get_thread_num() );
+  materialCopies[omp_get_thread_num()]->getXrayMatProp( x, y, z, delta, beta );
 }
 
 void GenericScattering::solve()
@@ -172,6 +180,19 @@ void GenericScattering::setMaterial( TetraGeometry &mat )
   xmax = crn2[0];
   ymax = crn2[1];
   zmax = crn2[2];
+
+  // Delete if there are materialCopies existing
+  for ( unsigned int i=0;i<materialCopies.size();i++ )
+  {
+    delete materialCopies[i];
+  }
+  materialCopies.resize(0);
+
+  for ( unsigned int i=0;i<omp_get_max_threads();i++ )
+  {
+    materialCopies.push_back( new TetraGeometry(mat) );
+  }
+  clog << "Number of threads: " << omp_get_max_threads() << endl;
 }
 
 void GenericScattering::setNumberOfSteps( unsigned int Nx, unsigned int Ny, unsigned int Nz )

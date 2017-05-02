@@ -8,6 +8,7 @@ class BVHTreeNode
 {
 public:
   BVHTreeNode(){};
+  BVHTreeNode( const BVHTreeNode &other );
   ~BVHTreeNode();
 
   /** Builds the BVH tree */

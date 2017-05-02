@@ -6,6 +6,7 @@
 #include "gaussianBeam.hpp"
 #include "materialFunction.hpp"
 #include "alternatingDirectionSolver.hpp"
+#include <vector>
 
 class TetraGeometry;
 class GenericScattering: public ParaxialSimulation
@@ -64,6 +65,7 @@ public:
   bool useFFTSolver{true};
 private:
   MaterialFunction *material{nullptr};
+  std::vector<MaterialFunction*> materialCopies;
   post::ExitField ef;
   post::ExitIntensity ei;
   post::ExitPhase ep;

@@ -19,6 +19,7 @@ class TetraGeometry: public MaterialFunction
 {
 public:
   TetraGeometry(){};
+  TetraGeometry( const TetraGeometry &other );
   virtual ~TetraGeometry();
 
   /** Load GMSH mesh file */

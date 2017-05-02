@@ -82,11 +82,6 @@ void FFTSolver3D::solveStep( unsigned int step )
   #endif
 
   applyAbsorbingBC();
-
-  if ( step%UPDATE_MESSAGE_FREQUENCY == 0 )
-  {
-    clog << "Step: " << step << "\r";
-  }
 }
 
 void FFTSolver3D::propagate()
@@ -137,7 +132,7 @@ void FFTSolver3D::refraction( unsigned int step )
 
   // FFTW3: Divide by length to normalize
   double normalization = prevSolution->n_rows*prevSolution->n_cols;
-  //#pragma omp parallel for
+  #pragma omp parallel for
   for ( unsigned int i=0;i<prevSolution->n_cols*prevSolution->n_rows; i++ )
   {
     unsigned int row = i%prevSolution->n_rows;

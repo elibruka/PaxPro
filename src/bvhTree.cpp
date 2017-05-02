@@ -11,6 +11,32 @@ BVHTreeNode::~BVHTreeNode()
   delete right; right=nullptr;
 }
 
+BVHTreeNode::BVHTreeNode( const BVHTreeNode &other )
+{
+  // Copy all parameters
+  crn1 = other.crn1;
+  crn2 = other.crn2;
+  tetraID = other.tetraID;
+  splitDirection = other.splitDirection;
+  geo = other.geo;
+  hasCheckedLeft = other.hasCheckedLeft;
+  hasCheckedRight = other.hasCheckedRight;
+  level = other.level;
+
+  // Copy-Tree
+  if ( other.left != nullptr )
+  {
+    left = new BVHTreeNode(*other.left);
+    left->parent = this;
+  }
+
+  if ( other.right != nullptr )
+  {
+    right = new BVHTreeNode(*other.right);
+    right->parent = this;
+  }
+}
+
 void BVHTreeNode::build( const TetraGeometry &tgeo )
 {
   clog << "Building Bounded Volume Hierachy...\n";
@@ -133,12 +159,14 @@ void BVHTreeNode::insert( unsigned int id, array<double,3> &newcrn1, array<doubl
 int BVHTreeNode::getID( double x, double y, double z )
 {
   BVHTreeNode *current = this;
-  unsigned int id = 0;
+  int id = 0;
   while ( true )
   {
     assert( current != nullptr );
+    //clog << current << " " << current->left << " " << current->right << endl;
     if (( current->left==nullptr ) && ( current->right==nullptr ))
     {
+      assert( geo != nullptr );
       // Is a leaf node
       if ( geo->isInside( x,y,z, geo->tetra(current->tetraID[0])) )
       {
@@ -162,8 +190,8 @@ int BVHTreeNode::getID( double x, double y, double z )
     {
       // It should never return for the second time to the root node
       bool didNotFindAnything = ( ( current->parent == nullptr ) && ( current->hasCheckedLeft ) && ( current->hasCheckedRight ) ) \
-      || ((current->parent==nullptr) && current->hasCheckedLeft && !current->right->isInside(x,y,z)) ||
-      ((current->parent==nullptr) && current->hasCheckedRight && !current->left->isInside(x,y,z));
+      || ((current->parent==nullptr) && current->hasCheckedLeft && !current->right->isInside(x,y,z)) \
+      || ((current->parent==nullptr) && current->hasCheckedRight && !current->left->isInside(x,y,z));
 
       if ( didNotFindAnything )
       {
