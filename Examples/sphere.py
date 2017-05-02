@@ -16,17 +16,13 @@ def main():
     xrayMatProp.beta = 0.0
 
     regionMat = pypax.region()
-    regionMat["void"] = xrayMatProp
     xrayMatProp.delta = 4.9E-5
     xrayMatProp.beta = 8.9E-6
-    regionMat["sphere"] = xrayMatProp
-    xrayMatProp.delta = 5E-5
-    xrayMatProp.beta = 7E-7
-    regionMat["substrate"] = xrayMatProp
+    regionMat["Sphere"] = xrayMatProp
 
     material = pypax.TetraGeometry()
     material.lengthScale = 100.0 # Set the length scale
-    material.load( "Geometries/all.msh" )
+    material.load( "Geometries/sphere.msh" )
     material.setMatProp( regionMat )
 
     # If the profile is not needed it is recommended to downscale the 3D matrix stored to reduce
@@ -41,7 +37,8 @@ def main():
     simulator.FFTPadLength = 32768
 
     simulator.setMaterial( material )
-    simulator.setNumberOfSteps( 256, 256, 256 )
+    simulator.setNumberOfSteps( 1024, 1024, 256 )
+    simulator.useFFTSolver = False # USE ADI
 
     simulator.solve()
 
