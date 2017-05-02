@@ -144,7 +144,7 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
   // Increase the pad length to at least the range of the solution
   signalLength = signalLength < solution.n_rows ? solution.n_rows:signalLength;
   signalLength = signalLength < solution.n_cols ? solution.n_cols:signalLength;
-  
+
   unsigned int Nx = signalLength < res.n_rows ? res.n_rows:signalLength;
   unsigned int Ny = signalLength < res.n_cols ? res.n_cols:signalLength;
 
@@ -264,6 +264,7 @@ void post::FarField::padSignal( arma::cx_vec &zeroPadded ) const
 void post::FarField::linearPadding( arma::cx_vec &zeroPadded ) const
 {
   unsigned int nInFit = 10;
+  cdouble im(0.0,1.0);
   // TODO: Is this safe?
   double *dataStart = reinterpret_cast<double*>( zeroPadded.memptr() );
   size_t stride = 2; // Skip imaginary parts
@@ -282,8 +283,8 @@ void post::FarField::linearPadding( arma::cx_vec &zeroPadded ) const
   assert( N <= zeroPadded.n_elem );
   unsigned int added = zeroPadded.n_elem - N;
   unsigned int padStart = zeroPadded.n_elem - added/2;
-  cdouble a0 = c0+1i*d0;
-  cdouble a1 = c1+1i*d1;
+  cdouble a0 = c0+im*d0;
+  cdouble a1 = c1+im*d1;
   double dx = x[1] - x[0];
   for ( int i=padStart;i<zeroPadded.n_elem;i++ )
   {
@@ -301,8 +302,8 @@ void post::FarField::linearPadding( arma::cx_vec &zeroPadded ) const
   dataStart += 1;
   gsl_fit_linear( x.memptr(), 1, dataStart, stride, nInFit, &d0, &d1, &cov00, &cov01, &cov11, &sumsq );
   padStart = sim->nodeNumberTransverse();
-  a0 = c0+1i*d0;
-  a1 = c1+1i*d1;
+  a0 = c0+im*d0;
+  a1 = c1+im*d1;
   for ( int i=padStart;i<padStart+added/2;i++)
   {
     double currX = x[x.n_elem-1] + (i-padStart)*dx;
