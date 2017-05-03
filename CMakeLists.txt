@@ -16,6 +16,7 @@ include_directories( /usr/lib/x86_64-linux-gnu/hdf5/serial/include )
 
 set( INSTALL_INC_DIR /usr/local/include )
 set( INSTALL_LIB_DIR /usr/local/lib )
+set( INSTALL_EXEC_DIR /usr/local/bin )
 
 # ========================== FIND ALL LIBRARIES ================================
 link_directories( /usr/local/lib )
@@ -122,6 +123,7 @@ FILE(GLOB HEADERFILES "include/*.hpp" )
 FILE( GLOB TPPFILES "include/*.tpp" )
 install( FILES ${HEADERFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES ${TPPFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
+install( FILES "paxpro++" DESTINATION ${INSTALL_EXEC_DIR} )
 #========================= EXAMPLES ============================================
 add_executable( sphere.out Examples/sphere.cpp )
 target_link_libraries( sphere.out ${LIB} paxpro )

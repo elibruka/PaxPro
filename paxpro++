@@ -7,5 +7,5 @@ LIBS="-larmadillo -lhdf5 -lhdf5_hl -lhdf5_cpp -lhdf5_hl_cpp -lfftw3 -lfftw3_omp 
 noExt=$(echo $1 | cut -f 1 -d '.')
 
 # Compile application
-g++ -std=c++11 -fopenmp -c -o "${noExt}.o" $1
-g++ -std=c++11 -fopenmp -o "${noExt}.out" "${noExt}.o" "${@:2}" ${LIBS}
+${CC} -std=c++11 -fopenmp -c -o "${noExt}.o" $1
+${CC} -std=c++11 -fopenmp -o "${noExt}.out" "${noExt}.o" "${@:2}" ${LIBS}
