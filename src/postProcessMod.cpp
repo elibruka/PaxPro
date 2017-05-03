@@ -143,4 +143,9 @@ void post::ExitPhase::result( const Solver &solver, arma::vec &res )
 void post::ExitPhase::result( const Solver &solver, arma::mat &res )
 {
   res = arma::arg( solver.getLastSolution3D() );
+  if ( resizeMatrices )
+  {
+    arma::mat copy(res);
+    resizeMatrix( copy, res );
+  }
 }

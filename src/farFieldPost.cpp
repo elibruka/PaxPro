@@ -326,7 +326,7 @@ void post::FarField::verifyConsistentAngles( double dx, double dy, double wavenu
   double PI = acos(-1.0);
   double qmax = PI/d;
   double alphaMax = 2.0*asin(qmax/wavenumber);
-  if ( alphaMax < phiMax )
+  if ( alphaMax*180.0/PI < phiMax )
   {
     throw( runtime_error("The specified scattering angle is to large. Increase the spatial resolution!") );
   }
