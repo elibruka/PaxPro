@@ -91,6 +91,8 @@ void GenericScattering::init()
   #ifdef PRINT_DEBUG
     clog << "Initialization finished...\n";
   #endif
+
+  ff.verifyConsistentAngles( dx, dy, wavenumber );
 }
 
 void GenericScattering::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const

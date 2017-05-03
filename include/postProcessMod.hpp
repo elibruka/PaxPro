@@ -89,6 +89,9 @@ public:
   /** Set the angular range */
   void setAngleRange( double angMin, double angMax );
 
+  /** Checks that the angles specified are consistent with the pad length and discretization */
+  void verifyConsistentAngles( double dx, double dy, double wavenumber ) const;
+
   /** Link a paraxial simulation object */
   void linkParaxialSim( const ParaxialSimulation &simulation ){ sim = &simulation; };
 

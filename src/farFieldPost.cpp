@@ -6,6 +6,7 @@
 #include <armadillo>
 #include <gsl/gsl_fit.h>
 #include <complex>
+#include <stdexcept>
 #define DEBUG_FARFIELD_POST
 
 using namespace std;
@@ -144,7 +145,7 @@ void post::FarField::result( const Solver &solver, arma::mat &res )
   // Increase the pad length to at least the range of the solution
   signalLength = signalLength < solution.n_rows ? solution.n_rows:signalLength;
   signalLength = signalLength < solution.n_cols ? solution.n_cols:signalLength;
-  
+
   unsigned int Nx = signalLength < res.n_rows ? res.n_rows:signalLength;
   unsigned int Ny = signalLength < res.n_cols ? res.n_cols:signalLength;
 
@@ -316,5 +317,17 @@ void post::FarField::constantPadding( arma::cx_vec &zeroPadded ) const
   for ( unsigned int i=N;i<zeroPadded.n_elem;i++ )
   {
     zeroPadded[i] = zeroPadded[0];
+  }
+}
+
+void post::FarField::verifyConsistentAngles( double dx, double dy, double wavenumber ) const
+{
+  double d = dx > dy ? dy:dx;
+  double PI = acos(-1.0);
+  double qmax = PI/d;
+  double alphaMax = 2.0*asin(qmax/wavenumber);
+  if ( alphaMax < phiMax )
+  {
+    throw( runtime_error("The specified scattering angle is to large. Increase the spatial resolution!") );
   }
 }
