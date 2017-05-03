@@ -12,3 +12,5 @@ PythonWrapper/*_*
 PythonWrapper/pypaxpro.py
 PythonWrapper/pypaxpro.pyc
 src/CMakeFiles/progress.marks
+Examples/*.o
+*.o
