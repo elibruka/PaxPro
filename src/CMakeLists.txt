@@ -1,7 +1,7 @@
 
 
 # Compile the library
-set( SOURCES absorber.cpp cladding.cpp controlFile.cpp crancNicholson.cpp
+set( SOURCES absorber.cpp cladding.cpp crancNicholson.cpp
 exitFieldSource.cpp farFieldPost.cpp fftSolver2D.cpp fftSolver3D.cpp fixedValuesSource.cpp
 gaussianBeam.cpp genericScattering.cpp h5Attribute.cpp linearMap1D.cpp paraxialEquation.cpp
 paraxialSimulation.cpp paraxialSource.cpp planeWave.cpp postProcessing.cpp postProcessMod.cpp

@@ -1,7 +1,6 @@
 #include "waveGuideFDSimulation.hpp"
 #include "solver2D.hpp"
 #include "cladding.hpp"
-#include "controlFile.hpp"
 #include "crankNicholson.hpp"
 #include "waveGuide.hpp"
 #include "solver1D.hpp"

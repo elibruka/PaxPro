@@ -1,7 +1,6 @@
 #include "paraxialSimulation.hpp"
 #include "H5Cpp.h"
 #include "solver2D.hpp"
-#include "controlFile.hpp"
 #include "crankNicholson.hpp"
 #include "waveGuide.hpp"
 #include "solver1D.hpp"

@@ -56,9 +56,6 @@ public:
   /** Fill JSON object with parameters specific to this class */
   virtual void fillInfo( Json::Value &obj ) const override{};
 
-  /** Initialize. Relevant if loading an old solution */
-  virtual void init( const ControlFile &ctl ) override{}; // TODO: Implement this
-
   /** Checks if the given point is inside the waveguide */
   virtual bool isInsideGuide( double x, double z ) const { return true; };
   // Refractive index: n = 1 - delta + i*beta

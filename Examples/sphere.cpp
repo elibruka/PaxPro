@@ -1,5 +1,4 @@
 #include "genericScattering.hpp"
-//#include "controlFile.hpp"
 #include <iostream>
 
 using namespace std;
