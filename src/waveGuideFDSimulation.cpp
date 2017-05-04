@@ -1,7 +1,6 @@
 #include "waveGuideFDSimulation.hpp"
 #include "solver2D.hpp"
 #include "cladding.hpp"
-#include "controlFile.hpp"
 #include "crankNicholson.hpp"
 #include "waveGuide.hpp"
 #include "solver1D.hpp"
@@ -274,9 +273,9 @@ void WaveGuideFDSimulation::useBorderTracker()
   bTracker->init();
 }
 
-void WaveGuideFDSimulation::save( ControlFile &ctl )
+void WaveGuideFDSimulation::save( const char* fname  )
 {
-  ParaxialSimulation::save( ctl );
+  ParaxialSimulation::save( fname );
   if ( wgborder != NULL )
   {
     unsigned int indx = 0;

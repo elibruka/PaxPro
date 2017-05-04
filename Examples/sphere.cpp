@@ -1,5 +1,4 @@
-#include <PaxPro/genericScattering.hpp>
-#include <PaxPro/controlFile.hpp>
+#include "genericScattering.hpp"
 #include <iostream>
 
 using namespace std;
@@ -94,9 +93,7 @@ int main( int argc, char **argv )
     simulation.solve();
 
     // Save results
-    ControlFile ctl("data/sphere");
-    simulation.save( ctl );
-    ctl.save();
+    simulation.save( "data/sphereExample.h5" );
   }
   catch ( exception &exc )
   {

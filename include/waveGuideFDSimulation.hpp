@@ -56,9 +56,6 @@ public:
   /** Fill JSON object with parameters specific to this class */
   virtual void fillInfo( Json::Value &obj ) const override{};
 
-  /** Initialize. Relevant if loading an old solution */
-  virtual void init( const ControlFile &ctl ) override{}; // TODO: Implement this
-
   /** Checks if the given point is inside the waveguide */
   virtual bool isInsideGuide( double x, double z ) const { return true; };
   // Refractive index: n = 1 - delta + i*beta
@@ -69,7 +66,7 @@ public:
   virtual void saveSpecialDatasets( hid_t file_id, std::vector<std::string> &dset ) const override;
 
   /** Save datasets */
-  virtual void save( ControlFile &ctl ) override;
+  virtual void save( const char* fname ) override;
 protected:
   double wglength{1E10};
   const Cladding *cladding{NULL};

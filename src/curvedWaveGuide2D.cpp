@@ -7,7 +7,6 @@
 #include "cladding.hpp"
 #include "solver2D.hpp"
 #include <cmath>
-#include "controlFile.hpp"
 #include "linearMap1D.hpp"
 #include <H5Cpp.h>
 #include <hdf5_hl.h>
@@ -67,13 +66,6 @@ double CurvedWaveGuideFD::waveGuideStartX( double z ) const
 double CurvedWaveGuideFD::waveGuideEndX( double z ) const
 {
   return waveGuideStartX( z ) + width;
-}
-
-void CurvedWaveGuideFD::init( const ControlFile &ctl )
-{
-  WaveGuideFDSimulation::init(ctl);
-  width = ctl.get()["waveguide"]["Width"].asDouble();
-  R = ctl.get()["waveguide"]["RadiusOfCurvature"].asDouble();
 }
 
 void CurvedWaveGuideFD::getFieldInsideWG( arma::mat &matrix ) const
@@ -226,9 +218,9 @@ void CurvedWaveGuideFD::solve()
   solver->downSampleLongitudinalDirection();
 }
 
-void CurvedWaveGuideFD::save( ControlFile &ctl )
+void CurvedWaveGuideFD::save( const char* fname )
 {
-  ParaxialSimulation::save( ctl );
+  ParaxialSimulation::save( fname );
   arma::vec res = transmittivity->get();
   saveArray( res, "transmittivity", commonAttributes );
 }

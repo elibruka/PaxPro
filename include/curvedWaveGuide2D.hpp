@@ -51,9 +51,6 @@ public:
   /** Fill a JSON object with parameters specific to curved waveguides */
   virtual void fillInfo( Json::Value &obj ) const override;
 
-  /** Initialize the simulation. Relevant if the results from an old simulation is loaded to redo the post processing */
-  virtual void init( const ControlFile &ctl ) override;
-
   /** Checks if the coordinates given is inside the waveguide */
   virtual bool isInsideGuide( double x, double z ) const override;
 
@@ -69,7 +66,7 @@ public:
   virtual void solve() override;
 
   /** Save the results */
-  virtual void save( ControlFile &ctl ) override;
+  virtual void save( const char* fname ) override;
 
   /** Returns the lower border of the waveguide at position z. Required when computing the transmission. */
   virtual double waveGuideStartX( double z ) const;
