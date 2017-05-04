@@ -8,6 +8,7 @@
 #include "h5Attribute.hpp"
 #include "postProcessing.hpp"
 #include "postProcessMod.hpp"
+#include "materialFunction.hpp"
 #include <vector>
 #include <string>
 class Solver;
@@ -161,8 +162,8 @@ public:
   virtual void init( const ControlFile &ctl ){}; // TODO: Implement this
 
   /** Get the material properties */
-  virtual void getXrayMatProp( double x, double z, double &delta, double &beta ) const{ delta=0.0; beta=0.0; };
-  virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const{ delta=0.0; beta=0.0; };
+  virtual void getXrayMatProp( double x, double z, double &delta, double &beta ) const;
+  virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const;
 
   /** Save results to HDF5 files */
   virtual void save( ControlFile &ctl );
@@ -175,6 +176,9 @@ public:
 
   /** Add a description of the simulation that will be added in the HDF5 file */
   std::string description{""};
+
+  /** Material function that specifies the refractive index */
+  const MaterialFunction *material{nullptr};
 protected:
   Solver *solver{NULL};
   Disctretization *xDisc; // Transverse

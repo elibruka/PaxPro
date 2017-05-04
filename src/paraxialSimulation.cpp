@@ -515,3 +515,29 @@ void ParaxialSimulation::setGroupAttributes()
     att.write( strDataType, strBuffer );
   }
 }
+
+void ParaxialSimulation::getXrayMatProp( double x, double z, double &delta, double &beta ) const
+{
+  if ( material != nullptr )
+  {
+    material->getXrayMatProp( x, 0.0, z, delta, beta );
+  }
+  else
+  {
+    delta = 0.0;
+    beta = 0.0;
+  }
+}
+
+void ParaxialSimulation::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const
+{
+  if ( material != nullptr )
+  {
+    material->getXrayMatProp( x, y, z, delta, beta );
+  }
+  else
+  {
+    delta = 0.0;
+    beta = 0.0;
+  }
+}
