@@ -1,10 +1,9 @@
 #include "crankNicholson.hpp"
-#include "waveGuideFDSimulation.hpp"
+#include "paraxialSimulation.hpp"
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include "paraxialEquation.hpp"
-#include "borderTracker.hpp"
 #include <cassert>
 #include "boundaryCondition.hpp"
 
@@ -27,23 +26,12 @@ void CrankNicholson::solveStep( unsigned int iz )
   double r = wavenumber*stepZ;
 
   double z = zmin + static_cast<double>(iz)*stepZ;
-  BorderTracker* bTr = guide->getBorderTracker();
-
-  if ( bTr != NULL )
-  {
-    bTr->locateBorder( z );
-  }
 
   for ( unsigned int ix=0; ix<Nx; ix++ )
   {
     double x = guide->getX( ix );
     double xPrevShifted = x;
     double xShifted = x;
-    if ( bTr != NULL )
-    {
-      xPrevShifted = bTr->getShiftedX(x, iz-1);
-      xShifted = bTr->getShiftedX(x, iz);
-    }
 
     double delta, beta;
     double deltaPrev, betaPrev;
@@ -73,29 +61,23 @@ void CrankNicholson::solveStep( unsigned int iz )
 
     // Fill right hand side
     cdouble left, center, right;
-    if ( bTr != NULL )
+
+    if ( ix > 0 )
     {
-      bTr->threePointStencil( ix, iz, left, center, right);
+      left = (*prevSolution)(ix-1);
     }
     else
     {
-      if ( ix > 0 )
-      {
-        left = (*prevSolution)(ix-1);
-      }
-      else
-      {
-        left = 0.0;
-      }
-      center = (*prevSolution)(ix);
-      if ( ix < Nx-1 )
-      {
-        right = (*prevSolution)(ix+1);
-      }
-      else
-      {
-        right = 0.0;
-      }
+      left = 0.0;
+    }
+    center = (*prevSolution)(ix);
+    if ( ix < Nx-1 )
+    {
+      right = (*prevSolution)(ix+1);
+    }
+    else
+    {
+      right = 0.0;
     }
 
     rhs[ix] = left*HminusPrev*gvalPrev;

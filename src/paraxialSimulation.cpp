@@ -130,6 +130,10 @@ void ParaxialSimulation::setSolver( Solver &solv )
   solver->setSimulator( *this );
 }
 
+void ParaxialSimulation::save( const string &fname )
+{
+  save( fname.c_str() );
+}
 void ParaxialSimulation::save( const char* h5fname )
 {
   if ( solver == NULL )

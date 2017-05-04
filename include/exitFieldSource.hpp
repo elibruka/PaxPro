@@ -2,7 +2,7 @@
 #define EXIT_FIELD_SOURCE_H
 #include <armadillo>
 #include <string>
-#include "waveGuideFDSimulation.hpp"
+#include "paraxialSimulation.hpp"
 #include <H5Cpp.h>
 
 class ExitFieldSource
