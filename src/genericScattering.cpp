@@ -29,6 +29,7 @@ void GenericScattering::init()
   ei.setExportDimensions( exportNx, exportNy );
   ep.setExportDimensions( exportNx, exportNy );
   ff.setPadLength( FFTPadLength );
+  ff.setExportDimensions( exportNx, exportNy );
 
   #ifdef PRINT_DEBUG
     clog << "Set reference solution array...\n";
