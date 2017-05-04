@@ -6,6 +6,10 @@
 
 typedef std::complex<double> cdouble;
 
+/**
+* 2D solver. Solves the paraxial wave equation by performing one propagation
+* step in the Fourier domain and then a refraction step in real space
+*/
 class FFTSolver2D: public Solver2D
 {
 public:

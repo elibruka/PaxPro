@@ -11,6 +11,10 @@ enum class ApplyDim_t{ROW,COL};
 template<ApplyDim_t dim>
 class DimGetter;
 
+/**
+* Transverse absobing function for FFT-based propagation. Can be used to suppress periodic boundary conditions
+* at the cost of reflections from the boundary.
+*/
 class Absorber
 {
 public:

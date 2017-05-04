@@ -8,6 +8,11 @@
 #include "absorber.hpp"
 
 typedef std::complex<double> cdouble;
+
+/**
+* FFT solver in 3D. Same as in 2D. One propagation step in the Fourier domain
+* and then a refraction step in real space.
+*/
 class FFTSolver3D: public Solver3D
 {
 public:

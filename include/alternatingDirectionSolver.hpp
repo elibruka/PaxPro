@@ -6,6 +6,12 @@
 
 typedef std::complex<double> cdouble;
 
+/**
+* Alternating Direction Implicit Method is a 3D solver that first treats
+* the finite difference approximation of in the x-direction by an implicit scheme
+* and y-direction by explicit scheme, then vice versa.
+* The beam is assumed to propagate in the positive z-direction
+*/
 class ADI: public Solver3D
 {
 public:
