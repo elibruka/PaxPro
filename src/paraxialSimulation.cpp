@@ -131,7 +131,7 @@ void ParaxialSimulation::setSolver( Solver &solv )
   solver->setSimulator( *this );
 }
 
-void ParaxialSimulation::save( ControlFile &ctl )
+void ParaxialSimulation::save( const char* h5fname )
 {
   if ( solver == NULL )
   {
@@ -142,14 +142,13 @@ void ParaxialSimulation::save( ControlFile &ctl )
   {
     throw ( runtime_error("No source specified!\n") );
   }
-  string fname = ctl.getFnameTemplate();
-  string h5fname = fname+".h5";
-  string jsonfname = fname+".json";
+  //string fname = ctl.getFnameTemplate();
+  //string h5fname = fname+".h5";
+  //string jsonfname = fname+".json";
   vector<string> dsets;
   if ( file != NULL ) delete file;
-  file = new H5::H5File( h5fname.c_str(), H5F_ACC_TRUNC );
+  file = new H5::H5File( h5fname, H5F_ACC_TRUNC );
   maingroup = new H5::Group( file->createGroup(groupname+"/") );
-  uid = ctl.getUID();
   setGroupAttributes();
 
   // Save all results from all the post processing modules
@@ -188,25 +187,6 @@ void ParaxialSimulation::save( ControlFile &ctl )
     }
     clog << "Dataset " << postProcess[i]->getName() << " added to HDF5 file\n";
   }
-
-  Json::Value wginfo;
-  Json::Value solverInfo;
-  Json::Value sourceInfo;
-  src->info( sourceInfo );
-  ctl.get()["datafile"] = h5fname;
-  ctl.get()["name"] = name;
-  ctl.get()["xDiscretization"]["min"] = xDisc->min;
-  ctl.get()["xDiscretization"]["max"] = xDisc->max;
-  ctl.get()["xDiscretization"]["step"] = xDisc->step;
-  ctl.get()["zDiscretization"]["min"] = zDisc->min;
-  ctl.get()["zDiscretization"]["max"] = zDisc->max;
-  ctl.get()["zDiscretization"]["step"] = zDisc->step;
-  ctl.get()["source"] = sourceInfo;
-  fillInfo( wginfo );
-  // TODO: For some reason the next line gives a segmentation fault
-  //solver->fillInfo( solverInfo );
-  ctl.get()["solver"] = solverInfo;
-  ctl.get()["waveguide"] = wginfo;
 }
 
 void ParaxialSimulation::getExitField( arma::vec &vec ) const
@@ -501,11 +481,20 @@ void ParaxialSimulation::setGroupAttributes()
   att = maingroup->createAttribute( "dy", H5::PredType::NATIVE_DOUBLE, attribSpace );
   att.write( H5::PredType::NATIVE_DOUBLE, &yDisc->step );
 
-  att = maingroup->createAttribute( "uid", H5::PredType::NATIVE_INT, attribSpace );
-  att.write( H5::PredType::NATIVE_INT, &uid );
+  //att = maingroup->createAttribute( "uid", H5::PredType::NATIVE_INT, attribSpace );
+  //att.write( H5::PredType::NATIVE_INT, &uid );
 
   att = maingroup->createAttribute( "wavenumber", H5::PredType::NATIVE_DOUBLE, attribSpace );
   att.write( H5::PredType::NATIVE_DOUBLE, &wavenumber );
+
+  if ( solver != nullptr )
+  {
+    string solvername = solver->getName();
+    H5::StrType strType( H5::PredType::C_S1, solvername.length() );
+    H5std_string strBuffer( solvername.c_str() );
+    att = maingroup->createAttribute( "solver", strType, attribSpace );
+    att.write( strType, strBuffer );
+  }
 
   if ( description != "" )
   {
