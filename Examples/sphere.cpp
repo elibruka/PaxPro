@@ -1,5 +1,5 @@
-#include <PaxPro/genericScattering.hpp>
-#include <PaxPro/controlFile.hpp>
+#include "genericScattering.hpp"
+//#include "controlFile.hpp"
 #include <iostream>
 
 using namespace std;
