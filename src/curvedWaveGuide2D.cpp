@@ -226,9 +226,9 @@ void CurvedWaveGuideFD::solve()
   solver->downSampleLongitudinalDirection();
 }
 
-void CurvedWaveGuideFD::save( ControlFile &ctl )
+void CurvedWaveGuideFD::save( const char* fname )
 {
-  ParaxialSimulation::save( ctl );
+  ParaxialSimulation::save( fname );
   arma::vec res = transmittivity->get();
   saveArray( res, "transmittivity", commonAttributes );
 }

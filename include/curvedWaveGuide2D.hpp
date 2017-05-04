@@ -69,7 +69,7 @@ public:
   virtual void solve() override;
 
   /** Save the results */
-  virtual void save( ControlFile &ctl ) override;
+  virtual void save( const char* fname ) override;
 
   /** Returns the lower border of the waveguide at position z. Required when computing the transmission. */
   virtual double waveGuideStartX( double z ) const;

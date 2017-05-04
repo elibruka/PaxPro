@@ -274,9 +274,9 @@ void WaveGuideFDSimulation::useBorderTracker()
   bTracker->init();
 }
 
-void WaveGuideFDSimulation::save( ControlFile &ctl )
+void WaveGuideFDSimulation::save( const char* fname  )
 {
-  ParaxialSimulation::save( ctl );
+  ParaxialSimulation::save( fname );
   if ( wgborder != NULL )
   {
     unsigned int indx = 0;

@@ -69,7 +69,7 @@ public:
   virtual void saveSpecialDatasets( hid_t file_id, std::vector<std::string> &dset ) const override;
 
   /** Save datasets */
-  virtual void save( ControlFile &ctl ) override;
+  virtual void save( const char* fname ) override;
 protected:
   double wglength{1E10};
   const Cladding *cladding{NULL};

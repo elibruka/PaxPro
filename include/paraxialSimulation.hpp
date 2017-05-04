@@ -165,15 +165,12 @@ public:
   virtual void getXrayMatProp( double x, double z, double &delta, double &beta ) const;
   virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const;
 
-  /** Save results to HDF5 files (Depricated) */
-  virtual void save( ControlFile &ctl ){};
-
   /** Save results to HDF5 file */
   virtual void save( const char* fname );
 
   /** Save results to HDF5 file */
   void save( const std::string &fname );
-  
+
   /** Return a border tracker object. Only relevant for geometries that tracks the border i.e. waveguides */
   virtual BorderTracker* getBorderTracker(){ return NULL; };
 
