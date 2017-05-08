@@ -54,12 +54,12 @@ public:
   std::string imgname{""};
   bool realTimeVisualization{false};
   bool useFFTSolver{true};
-private:
-  const MaterialFunction *material{NULL};
   post::ExitField ef;
   post::ExitIntensity ei;
   post::ExitPhase ep;
   post::FarField ff;
+private:
+  const MaterialFunction *material{NULL};
 
   GaussianBeam gbeam;
   FFTSolver3D fft3Dsolver;
