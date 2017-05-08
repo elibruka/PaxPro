@@ -156,3 +156,8 @@ void GenericScattering::printInfo() const
   cout << "Scattering angle: [" << ff.getMinScatteringAngle() << "," << ff.getMaxScatteringAngle() << "]\n";
   cout << "==================================================================\n";
 }
+
+void GenericScattering::getFarField( arma::mat &farF )
+{
+  ff.result( *solver, farF );
+}
