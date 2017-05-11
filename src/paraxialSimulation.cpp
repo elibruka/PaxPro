@@ -49,7 +49,7 @@ void ParaxialSimulation::step()
 
 void ParaxialSimulation::reset()
 {
-  solver->reset();
+  if ( solver != nullptr ) solver->reset();
 }
 
 void ParaxialSimulation::verifySolverReady() const

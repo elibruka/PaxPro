@@ -57,6 +57,7 @@ public:
   std::string imgname{""};
   bool realTimeVisualization{false};
   bool useFFTSolver{true};
+  bool supressMessages{false};
 private:
   const MaterialFunction *material{NULL};
   post::ExitField ef;
@@ -70,6 +71,8 @@ private:
 
   arma::cx_mat *reference{NULL};
   bool isReferenceRun{true};
+
+  bool isFirstTime{true};
 
   /** Has to be called before simulation is solved */
   void init();

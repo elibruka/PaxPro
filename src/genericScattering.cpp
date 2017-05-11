@@ -1,6 +1,6 @@
 #include "genericScattering.hpp"
 #include <stdexcept>
-#define PRINT_DEBUG
+//#define PRINT_DEBUG
 
 using namespace std;
 GenericScattering::GenericScattering( const char* name ): ParaxialSimulation(name)
@@ -20,6 +20,8 @@ void GenericScattering::setMaxScatteringAngle( double anglemax )
 
 void GenericScattering::init()
 {
+  reset();
+  isReferenceRun = true;
   #ifdef PRINT_DEBUG
     clog << "Initialization started...\n";
     clog << "Set export dimensions and padlength...\n";
@@ -87,7 +89,11 @@ void GenericScattering::init()
 
   setBoundaryConditions( gbeam );
 
-  *this << ef << ei << ep << ff;
+  if ( isFirstTime )
+  {
+    *this << ef << ei << ep << ff;
+    isFirstTime = false;
+  }
 
   #ifdef PRINT_DEBUG
     clog << "Initialization finished...\n";
@@ -142,19 +148,22 @@ void GenericScattering::solve()
 
 void GenericScattering::printInfo() const
 {
-  cout << "===================== SIMULATION INFO ===========================\n";
-  cout << "Maximum size of matrices for export: Nx= " << exportNx << " Ny=" << exportNy << endl;
-  cout << "FFT pad length: " << FFTPadLength << endl;
-  cout << "Domain size: x=[" << xmin << "," << xmax << "], y=[" << ymin << "," << ymax << "], z=["<<zmin<<","<<zmax<<"]\n";
-  cout << "Stepsize: dx=" << dx << ", dy="<<dy<<", dz="<<dz<<endl;
-  cout << "Downsample 3D solution by factor: downX=" << downSampleX << " downY=" << downSampleY << " downZ="<<downSampleZ << endl;
-  cout << "Wavelength: " << wavelength << endl;
-  cout << "Intensity limit for realtime visualization: Imin=" << intensityMin << " Imax=" << intensityMax << endl;
-  cout << "Phase limit for realtime visualization: Pmin=" << phaseMin << " Pmax=" << phaseMax << endl;
-  cout << "Image are saved to: " << imgname << endl;
-  cout << "Gaussian beam waist: " << gbeam.getWaist() << endl;
-  cout << "Scattering angle: [" << ff.getMinScatteringAngle() << "," << ff.getMaxScatteringAngle() << "]\n";
-  cout << "==================================================================\n";
+  if ( !supressMessages )
+  {
+    cout << "===================== SIMULATION INFO ===========================\n";
+    cout << "Maximum size of matrices for export: Nx= " << exportNx << " Ny=" << exportNy << endl;
+    cout << "FFT pad length: " << FFTPadLength << endl;
+    cout << "Domain size: x=[" << xmin << "," << xmax << "], y=[" << ymin << "," << ymax << "], z=["<<zmin<<","<<zmax<<"]\n";
+    cout << "Stepsize: dx=" << dx << ", dy="<<dy<<", dz="<<dz<<endl;
+    cout << "Downsample 3D solution by factor: downX=" << downSampleX << " downY=" << downSampleY << " downZ="<<downSampleZ << endl;
+    cout << "Wavelength: " << wavelength << endl;
+    cout << "Intensity limit for realtime visualization: Imin=" << intensityMin << " Imax=" << intensityMax << endl;
+    cout << "Phase limit for realtime visualization: Pmin=" << phaseMin << " Pmax=" << phaseMax << endl;
+    cout << "Image are saved to: " << imgname << endl;
+    cout << "Gaussian beam waist: " << gbeam.getWaist() << endl;
+    cout << "Scattering angle: [" << ff.getMinScatteringAngle() << "," << ff.getMaxScatteringAngle() << "]\n";
+    cout << "==================================================================\n";
+  }
 }
 
 void GenericScattering::getFarField( arma::mat &farF )
