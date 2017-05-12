@@ -41,6 +41,9 @@ public:
   /** Get last solution 3D */
   virtual const arma::cx_mat& getLastSolution3D() const;
 
+  /** Get last solution 3D. Non-const version should only be used for debugging */
+  virtual arma::cx_mat& getLastSolution3D();
+
   /** Solves the entire system */
   virtual void solve(){}; // This can be implemented at this level
 
@@ -65,9 +68,6 @@ protected:
   visa::GaussianKernel kernel;
   visa::LowPassFilter filter;
   unsigned int currentStep{1};
-
-  /** Get last solution 3D. Non-const version should only be used for debugging */
-  virtual arma::cx_mat& getLastSolution3D();
 };
 
 #endif

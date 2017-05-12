@@ -58,6 +58,19 @@ void GenericScattering::init()
 
   if ( realTimeVisualization )
   {
+    switch ( propagator )
+    {
+      case SolverType_t::ADI:
+        adisolver.realTimeVisualization();
+        adisolver.useTBC = true;
+        break;
+      case SolverType_t::FFT:
+        fft3Dsolver.visualizeRealSpace();
+        fft3Dsolver.setIntensityMinMax( intensityMin, intensityMax );
+        fft3Dsolver.setPhaseMinMax( phaseMin, phaseMax );
+        break;
+    }
+    /*
     if ( useFFTSolver )
     {
       fft3Dsolver.visualizeRealSpace();
@@ -68,7 +81,7 @@ void GenericScattering::init()
     {
       adisolver.realTimeVisualization();
       adisolver.useTBC = true;
-    }
+    }*/
   }
 
   if ( imgname != "" )
@@ -80,8 +93,21 @@ void GenericScattering::init()
     clog << "Set solver and post processing modules...\n";
   #endif
 
+  switch ( propagator )
+  {
+    case SolverType_t::ADI:
+      setSolver( adisolver );
+      break;
+    case SolverType_t::FFT:
+      setSolver( fft3Dsolver );
+      break;
+    case SolverType_t::PROJ:
+      setSolver( projSolver );
+      break;
+  }
+  /*
   if ( useFFTSolver ) setSolver( fft3Dsolver );
-  else setSolver( adisolver );
+  else setSolver( adisolver );*/
 
   #ifdef PRINT_DEBUG
     clog << "Set boundary conditions from Gaussian beam...\n";
@@ -127,8 +153,21 @@ void GenericScattering::solve()
 
   delete reference;
   reference = new arma::cx_mat;
-  if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
-  else *reference = adisolver.getLastSolution3D();
+
+  switch( propagator )
+  {
+    case SolverType_t::ADI:
+      *reference = adisolver.getLastSolution3D();
+      break;
+    case SolverType_t::FFT:
+      *reference = fft3Dsolver.getLastSolution3D();
+      break;
+    case SolverType_t::PROJ:
+      *reference = projSolver.getLastSolution3D();
+      break;
+  }
+  //if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
+  //else *reference = adisolver.getLastSolution3D();
 
   ff.setReference( *reference );
   clog << "Reference solution computed\n";
@@ -137,8 +176,17 @@ void GenericScattering::solve()
   isReferenceRun = false;
   if ( realTimeVisualization )
   {
-    if ( useFFTSolver ) fft3Dsolver.visualizeRealSpace();
-    else adisolver.realTimeVisualization();
+    switch( propagator )
+    {
+      case SolverType_t::ADI:
+        adisolver.realTimeVisualization();
+        break;
+      case SolverType_t::FFT:
+        fft3Dsolver.visualizeRealSpace();
+        break;
+    }
+    //if ( useFFTSolver ) fft3Dsolver.visualizeRealSpace();
+    //else adisolver.realTimeVisualization();
   }
   // Set resolution for higher
   setLongitudinalDiscretization( zmin, zmax, dz, downSampleZ );

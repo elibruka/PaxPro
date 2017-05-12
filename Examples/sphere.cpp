@@ -78,7 +78,7 @@ int main( int argc, char **argv )
   simulation.wavelength = 0.1569;
 
   simulation.realTimeVisualization = true;
-  simulation.useFFTSolver = false;
+  simulation.propagator = GenericScattering::SolverType_t::FFT;
 
   // Set how long the padded signal should be when computing the far fields
   simulation.FFTPadLength = 32768;
