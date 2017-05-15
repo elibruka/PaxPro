@@ -15,7 +15,7 @@ def main():
 
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    ax.imshow( intensity.T, cmap="inferno", aspect="auto", extent=[xmin,xmax,zmin,zmax])
+    ax.imshow( intensity.T, cmap="inferno", aspect="auto", extent=[zmin,zmax,xmin,xmax])
     ax.set_xlabel("$z$ (um)")
     ax.set_ylabel("$x$ (nm)")
     plt.savefig("Fig/waveguide2DIntensity.png")
