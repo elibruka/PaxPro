@@ -125,5 +125,8 @@ install( FILES ${HEADERFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES ${TPPFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES "paxpro++" DESTINATION ${INSTALL_EXEC_DIR} )
 #========================= EXAMPLES ============================================
-#add_executable( sphere.out Examples/sphere.cpp )
-#target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+add_executable( sphere.out Examples/sphere.cpp )
+target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+
+add_executable( waveguide2D.out Examples/waveguide2D.cpp )
+target_link_libraries( waveguide2D.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )

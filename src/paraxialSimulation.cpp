@@ -356,7 +356,7 @@ void ParaxialSimulation::addAttribute( H5::DataSet &ds, const char* name, int va
 void ParaxialSimulation::setBoundaryConditions( const ParaxialSource &source )
 {
 
-  if ( solver == NULL )
+  if ( solver == nullptr )
   {
     throw ( runtime_error("Solver needs to be set before boundary conditions!") );
   }
@@ -394,6 +394,8 @@ void ParaxialSimulation::setBoundaryConditions( const ParaxialSource &source )
       solver->setInitialConditions( values );
     }
   }
+
+  this->setWaveLength( source.getWavelength() );
 }
 
 void ParaxialSimulation::setBoundaryConditions( const ArraySource &source )

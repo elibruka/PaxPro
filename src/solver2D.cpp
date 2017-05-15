@@ -9,12 +9,13 @@ using namespace std;
 
 Solver2D::~Solver2D()
 {
-  if ( solution != NULL )
+  if ( solution != nullptr )
   {
     delete solution;
   }
-  if ( prevSolution != NULL ) delete prevSolution;
-  if ( currentSolution != NULL ) delete currentSolution;
+  if ( prevSolution != nullptr ) delete prevSolution;
+  if ( currentSolution != nullptr ) delete currentSolution;
+  if ( ownsParaxialEquationObject ) delete eq; eq = nullptr;
 }
 
 void Solver2D::setSimulator( ParaxialSimulation &wg )
@@ -22,9 +23,9 @@ void Solver2D::setSimulator( ParaxialSimulation &wg )
   Solver::setSimulator( wg );
   unsigned int Nx = guide->nodeNumberTransverse();
   unsigned int Nz = guide->nodeNumberLongitudinal();
-  if ( solution != NULL ) delete solution;
-  if ( prevSolution != NULL ) delete prevSolution;
-  if ( currentSolution != NULL ) delete currentSolution;
+  if ( solution != nullptr ) delete solution;
+  if ( prevSolution != nullptr ) delete prevSolution;
+  if ( currentSolution != nullptr ) delete currentSolution;
   unsigned int downSampledNx = Nx/guide->transverseDiscretization().downsamplingRatio;
   solution = new arma::cx_mat(downSampledNx,Nz);
   prevSolution = new arma::cx_vec(Nx);
@@ -36,6 +37,15 @@ void Solver2D::setSimulator( ParaxialSimulation &wg )
     filter.setTargetSize( downSampledNx );
     filter.computeFilterCoefficients( kernel );
   }
+
+  eq = new ParaxialEquation();
+}
+
+void Solver2D::setEquation( const ParaxialEquation &neweq )
+{
+  delete eq;
+  eq = &neweq;
+  ownsParaxialEquationObject = false;
 }
 
 void Solver2D::setInitialConditions( const arma::cx_vec &vec )
@@ -46,7 +56,7 @@ void Solver2D::setInitialConditions( const arma::cx_vec &vec )
 
 void Solver2D::setLeftBC( const cdouble values[] )
 {
-  if ( solution == NULL )
+  if ( solution == nullptr )
   {
     throw (runtime_error("A solver must be given before setting the boundary conditions!"));
   }
@@ -60,7 +70,7 @@ void Solver2D::setLeftBC( const cdouble values[] )
 
 void Solver2D::setXBC( const cdouble valuesTop[], const cdouble valuesBottom[] )
 {
-  if ( solution == NULL )
+  if ( solution == nullptr )
   {
     throw (runtime_error("A solver must be given before setting the boundary conditions!"));
   }
@@ -84,7 +94,7 @@ void Solver2D::imagPart( double *imagsol ) const
 
 void Solver2D::realOrImagPart( double *compsolution, Comp_t comp ) const
 {
-  if ( solution == NULL )
+  if ( solution == nullptr )
   {
     throw (runtime_error("No equation system has been solved!"));
   }
@@ -213,14 +223,10 @@ void Solver2D::filterInLongitudinalDirection()
 
 void Solver2D::solve()
 {
-  if ( eq == NULL )
-  {
-    throw ( runtime_error("No paraxial equation object given!") );
-  }
-
   // Assert that the solution matrix is allocated
-  assert( solution != NULL );
-  assert( guide != NULL );
+  assert( solution != nullptr );
+  assert( guide != nullptr );
+  assert( eq != nullptr );
 
   initValuesFromWaveGuide();
   for ( unsigned int iz=1;iz<Nz;iz++ )
@@ -245,7 +251,7 @@ void Solver2D::step()
 
 void Solver2D::initValuesFromWaveGuide()
 {
-  if ( guide == NULL )
+  if ( guide == nullptr )
   {
     throw( runtime_error("No waveguide specified!"));
   }

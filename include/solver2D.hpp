@@ -30,7 +30,7 @@ public:
   virtual ~Solver2D();
 
   /** Set paraxial equation to solve */
-  void setEquation( const ParaxialEquation &equation ){ eq = &equation; };
+  void setEquation( const ParaxialEquation &equation );
 
   /** Set the simulator */
   void setSimulator( ParaxialSimulation &newGuide ) override;
@@ -92,13 +92,14 @@ public:
   /** Fill JSON object with parameters specific to this class */
   virtual void fillInfo( Json::Value &obj ) const;
 protected:
-  const ParaxialEquation *eq{NULL};
-  arma::cx_mat *solution{NULL};
-  arma::cx_vec *prevSolution{NULL};
-  arma::cx_vec *currentSolution{NULL};
+  const ParaxialEquation *eq{nullptr};
+  arma::cx_mat *solution{nullptr};
+  arma::cx_vec *prevSolution{nullptr};
+  arma::cx_vec *currentSolution{nullptr};
 
   unsigned int Nx{0};
   unsigned int Nz{0};
+  bool ownsParaxialEquationObject{true};
   double stepX{1.0}, stepZ{1.0};
   double xmin{0.0};
   double zmin{0.0};
