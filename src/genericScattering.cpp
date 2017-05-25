@@ -195,6 +195,18 @@ void GenericScattering::solve()
   }
   // Set resolution for higher
   setLongitudinalDiscretization( zmin, zmax, dz, downSampleZ );
+  switch( propagator )
+  {
+    case SolverType_t::ADI:
+      adisolver.updateDimensionsOfArrays();
+      break;
+    case SolverType_t::FFT:
+      fft3Dsolver.updateDimensionsOfArrays();
+      break;
+    case SolverType_t::PROJ:
+      projSolver.updateDimensionsOfArrays();
+      break;
+  }
   setBoundaryConditions( gbeam );
   ParaxialSimulation::solve();
 }

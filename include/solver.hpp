@@ -61,6 +61,9 @@ public:
 
   /** Downsamples the solution in the longitudinal direction */
   virtual void downSampleLongitudinalDirection(){};
+
+  /** Updates the dimensions of the solution arrays. Useful if the discretization is changed */
+  virtual void updateDimensionsOfArrays(){};
 protected:
   Dimension_t dim;
   std::string name;

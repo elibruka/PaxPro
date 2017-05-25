@@ -219,3 +219,11 @@ void Solver3D::setPlotLimits( double intensityMin, double intensityMax, double p
   plots->get("Intensity").setColorLim( intensityMin, intensityMax );
   plots->get("Phase").setColorLim( phaseMin, phaseMax );
 }
+
+void Solver3D::updateDimensionsOfArrays()
+{
+  // The only thing that is done when the simulator is set in this class is to
+  // Assign a pointer to the simulation and set the correct size of the solution arrays
+  // Hence, this function only needs to call the setSimulator function
+  this->setSimulator( *guide );
+}

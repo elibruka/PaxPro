@@ -39,6 +39,9 @@ public:
 
   /** Set plot limits */
   void setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax );
+
+  /** Updates the dimensions of the arrays */
+  virtual void updateDimensionsOfArrays() override;
 protected:
   arma::cx_cube *solution{NULL};
   arma::cx_mat *currentSolution{NULL};
