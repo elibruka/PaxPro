@@ -119,6 +119,11 @@ void GenericScattering::init()
   {
     *this << ef << ei << ep << ff;
     isFirstTime = false;
+
+    for ( unsigned int i=0;i<userDefinedPPM.size();i++ )
+    {
+      *this << *userDefinedPPM[i];
+    }
   }
 
   #ifdef PRINT_DEBUG
@@ -217,4 +222,9 @@ void GenericScattering::printInfo() const
 void GenericScattering::getFarField( arma::mat &farF )
 {
   ff.result( *solver, farF );
+}
+
+void GenericScattering::addPostProcessing( post::PostProcessingModule &ppm )
+{
+  userDefinedPPM.push_back( &ppm );
 }

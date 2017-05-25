@@ -35,6 +35,9 @@ public:
   /** Returns the far field (squared) */
   void getFarField( arma::mat &farf );
 
+  /** Add additional post processing modules. The standard ones are far field, exit field and exit phase */
+  void addPostProcessing( post::PostProcessingModule &ppm );
+
   // Attributes
   unsigned int exportNx{512};
   unsigned int exportNy{512};
@@ -66,6 +69,7 @@ private:
   post::ExitIntensity ei;
   post::ExitPhase ep;
   post::FarField ff;
+  std::vector<post::PostProcessingModule*> userDefinedPPM;
 
   GaussianBeam gbeam;
   FFTSolver3D fft3Dsolver;
