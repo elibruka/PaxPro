@@ -82,11 +82,6 @@ void FFTSolver3D::solveStep( unsigned int step )
   #endif
 
   applyAbsorbingBC();
-
-  if ( step%UPDATE_MESSAGE_FREQUENCY == 0 )
-  {
-    clog << "Step: " << step << "\r";
-  }
 }
 
 void FFTSolver3D::propagate()
