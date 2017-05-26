@@ -17,3 +17,4 @@ Examples/*.o
 *.so
 Testing/*
 unittest/libpaxprotesting.a
+unittest/CMakeFiles/*
