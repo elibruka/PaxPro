@@ -70,17 +70,8 @@ void geom::Shape::transform( double &x, double &y, double &z ) const
 void geom::Shape::openSCADExport( string &code ) const
 {
   stringstream ss;
-  arma::mat reverseTrans(4,4);
-  reverseTrans.eye();
-  for ( unsigned int i=0;i<3;i++ )
-  {
-    for ( unsigned int j=i+1;j<3;j++ )
-    {
-      reverseTrans(j,i) = transformation(i,j);
-      reverseTrans(i,j) = transformation(j,i);
-    }
-    reverseTrans(i,3) = -transformation(i,3);
-  }
+  arma::mat reverseTrans;
+  getInverseTransformation(reverseTrans);
   ss << "multmatrix( m=[";
   for ( unsigned int i=0;i<4;i++ )
   {
@@ -93,6 +84,36 @@ void geom::Shape::openSCADExport( string &code ) const
   openSCADDescription(openscadCode);
   ss << "{" <<  openscadCode << "}\n";
   code = ss.str();
+}
+
+void geom::Shape::getInverseTransformation( arma::mat &inverse ) const
+{
+  inverse.set_size(4,4);
+  inverse.eye();
+  for ( unsigned int i=0;i<3;i++ )
+  {
+    for ( unsigned int j=i+1;j<3;j++ )
+    {
+      inverse(j,i) = transformation(i,j);
+      inverse(i,j) = transformation(j,i);
+    }
+    inverse(i,3) = -transformation(i,3);
+  }
+}
+
+void geom::Shape::inverseTransform( double &x, double &y, double &z ) const
+{
+  arma::mat inverse;
+  getInverseTransformation( inverse );
+  arma::vec vec(4);
+  vec(0) = x;
+  vec(1) = y;
+  vec(2) = z;
+  vec(3) = 1.0;
+  vec = inverse*vec;
+  x = vec(0);
+  y = vec(1);
+  z = vec(2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +144,7 @@ void geom::Box::openSCADDescription( std::string &description ) const
   ss << "cube([" << Lx << "," << Ly << "," << Lz << "],true);";
   description = ss.str();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 bool geom::Cylinder::isInside( double x, double y, double z ) const

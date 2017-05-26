@@ -31,8 +31,14 @@ namespace geom
     /** Transform the coordinate according to the orientation of the shape */
     void transform( double &x, double &y, double  &z ) const;
 
+    /** Computes the inverse geometrical transform */
+    void inverseTransform( double &x, double &y, double &z ) const;
+
     /** Get the transformation matrix */
     const arma::mat& getTransformation() const { return transformation; };
+
+    /** Computes the inverse transformation matrix */
+    void getInverseTransformation( arma::mat &inverse ) const;
   protected:
     std::string name;
     arma::mat transformation;
