@@ -115,6 +115,15 @@ set( LIB ${LIB} ${FFTW_LIB} )
 set( LIB ${LIB} "m") # Add C-math library
 include_directories( FFTW_INC )
 
+find_package( GTest )
+set( LIB ${LIB} ${GTEST_LIBRARIES} )
+include_directories( ${GTEST_INCLUDE_DIRS} )
+MESSAGE( STATUS ${GTEST_LIBRARIES})
+
+if ( GTEST_FOUND )
+  add_subdirectory( unittest )
+endif()
+
 configure_file( include/config.h.in include/config.h)
 #=========================== COMPILE LIBRARY ===================================
 
@@ -126,7 +135,14 @@ install( FILES ${TPPFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES "paxpro++" DESTINATION ${INSTALL_EXEC_DIR} )
 #========================= EXAMPLES ============================================
 add_executable( sphere.out Examples/sphere.cpp )
-target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+#target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+target_link_libraries( sphere.out ${LIB} paxpro )
 
 add_executable( waveguide2D.out Examples/waveguide2D.cpp )
 target_link_libraries( waveguide2D.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+
+if ( GTEST_FOUND )
+  include_directories( unittest )
+  add_executable( alltests.out unittest/alltests.cpp )
+  target_link_libraries( alltests.out ${LIB} paxpro)
+endif()

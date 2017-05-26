@@ -16,16 +16,16 @@ void geom::Shape::translate( double x, double y, double z )
 {
   arma::mat mat(4,4);
   mat.eye();
-  mat(3,0) = x;
-  mat(3,1) = y;
-  mat(3,2) = z;
+  mat(0,3) = -x;
+  mat(1,3) = -y;
+  mat(2,3) = -z;
   transformation = transformation*mat;
 }
 
 void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
 {
   double PI = acos(-1.0);
-  double angle = angle*PI/180.0;
+  double angle = angleDeg*PI/180.0;
   arma::mat mat(4,4);
   mat.eye();
 
@@ -39,8 +39,8 @@ void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
       break;
     case geom::Axis_t::Y:
       mat(0,0) = cos(angle);
-      mat(0,2) = sin(angle);
-      mat(2,0) = -sin(angle);
+      mat(0,2) = -sin(angle);
+      mat(2,0) = sin(angle);
       mat(2,2) = cos(angle);
       break;
     case geom::Axis_t::Z:
