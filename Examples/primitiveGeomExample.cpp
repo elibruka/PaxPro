@@ -22,6 +22,9 @@ int main()
     part.difference( cylinder );
 
     geom::Sphere ellipsoid( 10.0 );
+
+    // Note that the translations are also affected by the scale
+    // Thus a translation of x=-2.5 corresponds in this case to x = -4.0*2.5 = -10.0
     ellipsoid.scale( 4.0, geom::Axis_t::X );
     ellipsoid.translate( -2.5, 0.0, 0.0 );
     part.add( ellipsoid );
