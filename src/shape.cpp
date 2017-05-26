@@ -88,6 +88,8 @@ void geom::Shape::openSCADExport( string &code ) const
 
 void geom::Shape::getInverseTransformation( arma::mat &inverse ) const
 {
+  inverse = arma::inv(transformation);
+  /*
   inverse.set_size(4,4);
   inverse.eye();
   for ( unsigned int i=0;i<3;i++ )
@@ -98,7 +100,7 @@ void geom::Shape::getInverseTransformation( arma::mat &inverse ) const
       inverse(i,j) = transformation(j,i);
     }
     inverse(i,3) = -transformation(i,3);
-  }
+  }*/
 }
 
 void geom::Shape::inverseTransform( double &x, double &y, double &z ) const
