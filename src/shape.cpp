@@ -19,7 +19,7 @@ void geom::Shape::translate( double x, double y, double z )
   mat(0,3) = -x;
   mat(1,3) = -y;
   mat(2,3) = -z;
-  transformation = transformation*mat;
+  transformation = mat*transformation;
 }
 
 void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
@@ -50,7 +50,7 @@ void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
       mat(1,1) = cos(angle);
       break;
   }
-  transformation = transformation*mat;
+  transformation = mat*transformation;
 }
 
 void geom::Shape::transform( double &x, double &y, double &z ) const
@@ -68,12 +68,36 @@ void geom::Shape::transform( double &x, double &y, double &z ) const
 
 void geom::Shape::openSCADExport( string &code ) const
 {
-  // Not implemented
+  stringstream ss;
+  arma::mat reverseTrans(4,4);
+  reverseTrans.eye();
+  for ( unsigned int i=0;i<3;i++ )
+  {
+    for ( unsigned int j=i+1;j<3;j++ )
+    {
+      reverseTrans(j,i) = transformation(i,j);
+      reverseTrans(i,j) = transformation(j,i);
+    }
+    reverseTrans(i,3) = -transformation(i,3);
+  }
+  ss << "multmatrix( m=[";
+  for ( unsigned int i=0;i<4;i++ )
+  {
+    ss << "[" << reverseTrans(i,0) << "," << reverseTrans(i,1) << "," << reverseTrans(i,2) << ",";
+    ss << reverseTrans(i,3) << "]";
+    if ( i != 3 ) ss << ",\n";
+    else ss << "])";
+  }
+  string openscadCode;
+  openSCADDescription(openscadCode);
+  ss << "{" <<  openscadCode << "}\n";
+  code = ss.str();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 bool geom::Sphere::isInside( double x, double y, double z ) const
 {
+  transform(x,y,z);
   double r = sqrt( x*x + y*y + z*z );
   return r < radius;
 }
@@ -81,6 +105,20 @@ bool geom::Sphere::isInside( double x, double y, double z ) const
 void geom::Sphere::openSCADDescription( std::string &description ) const
 {
   stringstream ss;
-  ss << "sphere(" << radius << ");";
+  ss << "sphere(" << radius << ",true);";
+  description = ss.str();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool geom::Box::isInside( double x, double y, double z ) const
+{
+  transform(x,y,z);
+  return ( x > -Lx/2.0 ) && ( x < Lx/2.0 ) && ( y > -Ly/2.0 ) && ( y < Ly/2.0 ) && ( z > -Lz/2.0 ) && ( z > Lz/2.0 );
+}
+
+void geom::Box::openSCADDescription( std::string &description ) const
+{
+  stringstream ss ;
+  ss << "cube([" << Lx << "," << Ly << "," << Lz << "],true);";
   description = ss.str();
 }

@@ -141,6 +141,9 @@ target_link_libraries( sphere.out ${LIB} paxpro )
 add_executable( waveguide2D.out Examples/waveguide2D.cpp )
 target_link_libraries( waveguide2D.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
 
+add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp)
+target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
+
 if ( GTEST_FOUND )
   include_directories( unittest )
   add_executable( alltests.out unittest/alltests.cpp )

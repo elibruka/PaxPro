@@ -30,6 +30,9 @@ namespace geom
 
     /** Transform the coordinate according to the orientation of the shape */
     void transform( double &x, double &y, double  &z ) const;
+
+    /** Get the transformation matrix */
+    const arma::mat& getTransformation() const { return transformation; };
   protected:
     std::string name;
     arma::mat transformation;
@@ -48,6 +51,23 @@ namespace geom
     virtual void openSCADDescription( std::string &description ) const override final;
   protected:
     double radius{0.0};
+  };
+
+  /** A class that implements a box */
+  class Box: public Shape
+  {
+  public:
+    Box( double Lx, double Ly, double Lz ): Shape("Cube"), Lx(Lx), Ly(Ly), Lz(Lz){};
+
+    /** Override */
+    virtual bool isInside( double x, double y, double z ) const override final;
+
+    /** Overide */
+    virtual void openSCADDescription( std::string &description) const override final;
+  protected:
+    double Lx;
+    double Ly;
+    double Lz;
   };
 };
 

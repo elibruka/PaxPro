@@ -15,3 +15,5 @@ src/CMakeFiles/progress.marks
 Examples/*.o
 *.o
 *.so
+Testing/*
+unittest/libpaxprotesting.a
