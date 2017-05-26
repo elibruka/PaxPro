@@ -69,6 +69,23 @@ namespace geom
     double Ly;
     double Lz;
   };
+
+  class Cylinder: public Shape
+  {
+  public:
+    Cylinder( double radius, double height ): Shape("Cylindger"), r1(radius), r2(radius), height(height){};
+    Cylinder( double r1, double r2, double height ): Shape("Cylinder"), r1(r1), r2(r2), height(height){};
+
+    /** Override */
+    virtual bool isInside( double x, double y, double z ) const override final;
+
+    /** Overide */
+    virtual void openSCADDescription( std::string &description) const override final;
+  protected:
+    double r1;
+    double r2;
+    double height;
+  };
 };
 
 #endif

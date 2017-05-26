@@ -120,10 +120,6 @@ set( LIB ${LIB} ${GTEST_LIBRARIES} )
 include_directories( ${GTEST_INCLUDE_DIRS} )
 MESSAGE( STATUS ${GTEST_LIBRARIES})
 
-if ( GTEST_FOUND )
-  add_subdirectory( unittest )
-endif()
-
 configure_file( include/config.h.in include/config.h)
 #=========================== COMPILE LIBRARY ===================================
 

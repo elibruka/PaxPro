@@ -1,6 +1,7 @@
 #include "shapes.hpp"
 #include <cmath>
 #include <sstream>
+#include <cassert>
 
 using namespace std;
 
@@ -120,5 +121,26 @@ void geom::Box::openSCADDescription( std::string &description ) const
 {
   stringstream ss ;
   ss << "cube([" << Lx << "," << Ly << "," << Lz << "],true);";
+  description = ss.str();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool geom::Cylinder::isInside( double x, double y, double z ) const
+{
+  transform(x,y,z);
+  bool zIsInside = ( z < height/2.0 ) && ( z > -height/2.0 );
+  if ( !zIsInside ) return false;
+
+  double slope = ( r2-r1 )/height;
+  double radius = slope*(z+height/2.0) + r1;
+  assert( radius >= 0.0 );
+  double r = sqrt(x*x+y*y);
+  return r < radius;
+}
+
+void geom::Cylinder::openSCADDescription( string &description ) const
+{
+  stringstream ss;
+  ss << "cylinder(" << height << "," << r1 << "," << r2 << ",true);";
   description = ss.str();
 }

@@ -26,6 +26,12 @@ namespace geom
 
     /** Saves the object including differences and unions */
     void save( const char* fname ) const;
+
+    /** Real part of the refractive index */
+    double delta{0.0};
+
+    /** Imaginary part of the refractive index */
+    double beta{0.0};
   private:
     std::string name;
     std::vector<const Shape*> shapes;
