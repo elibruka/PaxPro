@@ -118,6 +118,25 @@ void geom::Shape::inverseTransform( double &x, double &y, double &z ) const
   z = vec(2);
 }
 
+void geom::Shape::scale( double factor, geom::Axis_t axis )
+{
+  arma::mat matrix(4,4);
+  matrix.eye();
+  switch ( axis )
+  {
+    case geom::Axis_t::X:
+      matrix(0,0) = 1.0/factor;
+      break;
+    case geom::Axis_t::Y:
+      matrix(1,1) = 1.0/factor;
+      break;
+    case geom::Axis_t::Z:
+      matrix(2,2) = 1.0/factor;
+      break;
+  }
+  transformation = matrix*transformation;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 bool geom::Sphere::isInside( double x, double y, double z ) const
 {

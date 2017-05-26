@@ -20,6 +20,11 @@ int main()
     geom::Cylinder cylinder( 10.0, 10.0 );
     cylinder.translate( 15.0, 0.0, 0.0 );
     part.difference( cylinder );
+
+    geom::Sphere ellipsoid( 10.0 );
+    ellipsoid.scale( 4.0, geom::Axis_t::X );
+    ellipsoid.translate( -2.5, 0.0, 0.0 );
+    part.add( ellipsoid );
     part.save( "data/testpart.scad" );
   }
   catch( exception &exc )

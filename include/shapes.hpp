@@ -28,6 +28,9 @@ namespace geom
     /** Rotates the object */
     void rotate( double angleDeg, Axis_t axis );
 
+    /** Scale an object along one of its axes */
+    void scale( double factor, Axis_t axis );
+
     /** Transform the coordinate according to the orientation of the shape */
     void transform( double &x, double &y, double  &z ) const;
 
