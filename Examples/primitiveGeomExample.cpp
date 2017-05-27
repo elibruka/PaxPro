@@ -20,14 +20,17 @@ int main()
     geom::Cylinder cylinder( 10.0, 10.0 );
     cylinder.translate( 15.0, 0.0, 0.0 );
     part.difference( cylinder );
+    part.rotate( 30.0, geom::Axis_t::X );
+    part.translate( 20.0, 0.0, 0.0 );
 
+    /*
     geom::Sphere ellipsoid( 10.0 );
 
     // Note that the translations are also affected by the scale
     // Thus a translation of x=-2.5 corresponds in this case to x = -4.0*2.5 = -10.0
     ellipsoid.scale( 4.0, geom::Axis_t::X );
     ellipsoid.translate( -2.5, 0.0, 0.0 );
-    part.add( ellipsoid );
+    part.add( ellipsoid );*/
     part.save( "data/testpart.scad" );
   }
   catch( exception &exc )

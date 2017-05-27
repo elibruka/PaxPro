@@ -2,22 +2,17 @@
 
 void OpenSCADMaterial::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const
 {
-  delta = deltaSurrounding;
-  beta = betaSurrounding;
+  delta = 0.0;
+  beta = 0.0;
   if ( isReferenceRun ) return;
 
-  for ( unsigned int i=0;i<pars.size();i++ )
+  for ( unsigned int i=0;i<modules.size();i++ )
   {
-    if ( parts[i]->isInside( x, y, z) )
-    {
-      delta = parts[i]->delta;
-      beta = parts[i]->beta;
-      return;
-    }
+    if ( modules[i]->getXrayMatProp( x, y, z, delta, beta) ) return;
   }
 }
 
-void OpenSCADMaterial::addPart( const geom::Part &newpart )
+void OpenSCADMaterial::addModule( const geom::Module &newmodule )
 {
-  parts.push_back( &newpart );
+  modules.push_back( &newmodule );
 }

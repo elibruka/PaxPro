@@ -15,3 +15,4 @@
 %include "genericScattering.hpp"
 %include "shapes.hpp"
 %include "geometry.hpp"
+%include "materialFunction.hpp"

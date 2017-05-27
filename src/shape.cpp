@@ -20,7 +20,8 @@ void geom::Shape::translate( double x, double y, double z )
   mat(0,3) = -x;
   mat(1,3) = -y;
   mat(2,3) = -z;
-  transformation = mat*transformation;
+  //transformation = mat*transformation;
+  transformation = transformation*mat;
 }
 
 void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
@@ -51,7 +52,8 @@ void geom::Shape::rotate( double angleDeg, geom::Axis_t axis )
       mat(1,1) = cos(angle);
       break;
   }
-  transformation = mat*transformation;
+  //transformation = mat*transformation;
+  transformation = transformation*mat;
 }
 
 void geom::Shape::transform( double &x, double &y, double &z ) const
@@ -88,8 +90,11 @@ void geom::Shape::openSCADExport( string &code ) const
 
 void geom::Shape::getInverseTransformation( arma::mat &inverse ) const
 {
+
   inverse = arma::inv(transformation);
+
   /*
+  // TODO: Why is the matrix invserse different from below, with no scaling?
   inverse.set_size(4,4);
   inverse.eye();
   for ( unsigned int i=0;i<3;i++ )
@@ -120,6 +125,7 @@ void geom::Shape::inverseTransform( double &x, double &y, double &z ) const
 
 void geom::Shape::scale( double factor, geom::Axis_t axis )
 {
+  throw ( runtime_error("The invserse transformation does no longer work for scaling!") );
   arma::mat matrix(4,4);
   matrix.eye();
   switch ( axis )
@@ -156,7 +162,7 @@ void geom::Sphere::openSCADDescription( std::string &description ) const
 bool geom::Box::isInside( double x, double y, double z ) const
 {
   transform(x,y,z);
-  return ( x > -Lx/2.0 ) && ( x < Lx/2.0 ) && ( y > -Ly/2.0 ) && ( y < Ly/2.0 ) && ( z > -Lz/2.0 ) && ( z > Lz/2.0 );
+  return ( x > -Lx/2.0 ) && ( x < Lx/2.0 ) && ( y > -Ly/2.0 ) && ( y < Ly/2.0 ) && ( z > -Lz/2.0 ) && ( z < Lz/2.0 );
 }
 
 void geom::Box::openSCADDescription( std::string &description ) const

@@ -1,16 +1,68 @@
 #include "geometry.hpp"
 #include <stdexcept>
 #include <fstream>
+#include <cassert>
 
 using namespace std;
 
-void geom::Part::add( const Shape &shape )
+geom::Part::~Part()
+{
+  if ( ownShapeObjects )
+  {
+    for ( unsigned int i=0;i<shapes.size();i++ )
+    {
+      delete shapes[i];
+    }
+  }
+}
+
+geom::Part::Part( const Part &other )
+{
+  this->swap( other );
+}
+
+void geom::Part::swap( const Part &other )
+{
+  if ( this == &other ) return;
+
+  name = other.name;
+  if ( ownShapeObjects )
+  {
+    for ( unsigned int i=0;i<shapes.size();i++ )
+    {
+      delete shapes[i];
+    }
+  }
+
+  shapes.clear();
+  operations.clear();
+
+  // Just to be sure that clear sets the size of the vectors to 0
+  assert( shapes.size() == 0 );
+  assert( operations.size() == 0 );
+
+  for ( unsigned int i=0;i<other.shapes.size();i++ )
+  {
+    shapes.push_back( other.shapes[i]->clone() );
+    operations.push_back( other.operations[i] );
+  }
+  ownShapeObjects = true;
+}
+
+geom::Part& geom::Part::operator =( const geom::Part &rhs )
+{
+  this->swap(rhs);
+  return *this;
+}
+
+
+void geom::Part::add( Shape &shape )
 {
   shapes.push_back( &shape );
   operations.push_back( Operation_t::UNION );
 }
 
-void geom::Part::difference( const Shape &shape )
+void geom::Part::difference( Shape &shape )
 {
   if ( shapes.size() == 0 )
   {
@@ -97,4 +149,134 @@ void geom::Part::save( const char* fname ) const
   }
   out << everything;
   out.close();
+}
+
+void geom::Part::translate( double x, double y, double z )
+{
+  for ( unsigned int i=0;i<shapes.size();i++ )
+  {
+    shapes[i]->translate(x,y,z);
+  }
+}
+
+void geom::Part::rotate( double angleDeg, geom::Axis_t axis )
+{
+  for ( unsigned int i=0;i<shapes.size();i++ )
+  {
+    shapes[i]->rotate( angleDeg, axis );
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+geom::Module::~Module()
+{
+  if ( ownPartObjects )
+  {
+    for ( unsigned int i=0;i<parts.size();i++ )
+    {
+      delete parts[i];
+    }
+    parts.clear();
+  }
+}
+
+geom::Module::Module( const geom::Module &other )
+{
+  this->swap( other );
+}
+
+geom::Module& geom::Module::operator =( const geom::Module &rhs )
+{
+  this->swap( rhs );
+  return *this;
+}
+
+void geom::Module::add( Part &part )
+{
+  parts.push_back( &part );
+  operations.push_back( Operation_t::UNION );
+}
+
+void geom::Module::difference( Part &part )
+{
+  if ( parts.size() <= 1 )
+  {
+    throw( runtime_error("There have to be at least one part present before making difference!") );
+  }
+  parts.push_back( &part );
+  operations.push_back( Operation_t::DIFFERENCE );
+}
+
+bool geom::Module::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const
+{
+  delta = 0.0;
+  beta = 0.0;
+  for ( unsigned int i=0;i<parts.size();i++ )
+  {
+    if ( parts[parts.size()-i-1]->isInside(x,y,z) )
+    {
+      switch( operations[parts.size()-i-1] )
+      {
+        case Operation_t::UNION:
+          delta = parts[parts.size()-i-1]->delta;
+          beta = parts[parts.size()-i-1]->beta;
+          return true;
+        case Operation_t::DIFFERENCE:
+          delta = 0.0;
+          beta = 0.0;
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
+void geom::Module::translate( double x, double y, double z )
+{
+  for ( unsigned int i=0;i<parts.size();i++ )
+  {
+    parts[i]->translate(x,y,z);
+  }
+}
+
+void geom::Module::rotate( double angleDeg, geom::Axis_t axis )
+{
+  for ( unsigned int i=0;i<parts.size();i++ )
+  {
+    parts[i]->rotate( angleDeg, axis );
+  }
+}
+
+void geom::Module::saveIndividualParts( const char* prefix )
+{
+  for ( unsigned int i=0;i<parts.size();i++ )
+  {
+    string fname(prefix);
+    fname += (name+"_"+parts[i]->getName()+".scad");
+    parts[i]->save(fname.c_str());
+  }
+}
+
+void geom::Module::swap( const geom::Module &other )
+{
+  if ( ownPartObjects )
+  {
+    for ( unsigned int i=0;i<parts.size();i++ )
+    {
+      delete parts[i];
+    }
+  }
+
+  parts.clear();
+  operations.clear();
+
+  assert( parts.size() == 0 );
+  assert( operations.size() == 0 );
+
+  for ( unsigned int i=0;i<other.parts.size();i++ )
+  {
+    parts.push_back( new geom::Part( *other.parts[i]) );
+    operations.push_back( other.operations[i] );
+  }
+  ownPartObjects = true;
 }

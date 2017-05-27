@@ -19,6 +19,9 @@ namespace geom
     /** A string that should returns the corresponding openSCAD description of the object */
     virtual void openSCADDescription( std::string &description ) const = 0;
 
+    /** Return a clone of this object */
+    virtual Shape* clone() = 0;
+
     /** Returns the code segment that represents the object */
     void openSCADExport( std::string &code ) const;
 
@@ -42,6 +45,9 @@ namespace geom
 
     /** Computes the inverse transformation matrix */
     void getInverseTransformation( arma::mat &inverse ) const;
+
+    /** Get the name of the part */
+    const std::string& getName() const { return name; };
   protected:
     std::string name;
     arma::mat transformation;
@@ -58,6 +64,9 @@ namespace geom
 
     /** Override openSCADExport */
     virtual void openSCADDescription( std::string &description ) const override final;
+
+    /** Returns a pointer to a clone of this class */
+    virtual Shape* clone() override { return new Sphere(*this); };
   protected:
     double radius{0.0};
   };
@@ -73,6 +82,9 @@ namespace geom
 
     /** Overide */
     virtual void openSCADDescription( std::string &description) const override final;
+
+    /** Returns a pointer to a clone of this box */
+    virtual Shape* clone() override { return new Box(*this); };
   protected:
     double Lx;
     double Ly;
@@ -90,6 +102,9 @@ namespace geom
 
     /** Overide */
     virtual void openSCADDescription( std::string &description) const override final;
+
+    /** Returns a pointer to a clone of this object */
+    virtual Shape* clone() override { return new Cylinder(*this); };
   protected:
     double r1;
     double r2;
