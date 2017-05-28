@@ -9,10 +9,10 @@ public:
   virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const = 0;
 };
 
-class OpenSCADMaterial: public MaterialFunction
+class CSGMaterial: public MaterialFunction
 {
 public:
-  OpenSCADMaterial(){};
+  CSGMaterial(){};
 
   virtual void getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const override;
 

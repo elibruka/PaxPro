@@ -1,6 +1,6 @@
 #include "materialFunction.hpp"
 
-void OpenSCADMaterial::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const
+void CSGMaterial::getXrayMatProp( double x, double y, double z, double &delta, double &beta ) const
 {
   delta = 0.0;
   beta = 0.0;
@@ -12,7 +12,7 @@ void OpenSCADMaterial::getXrayMatProp( double x, double y, double z, double &del
   }
 }
 
-void OpenSCADMaterial::addModule( const geom::Module &newmodule )
+void CSGMaterial::addModule( const geom::Module &newmodule )
 {
   modules.push_back( &newmodule );
 }

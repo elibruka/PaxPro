@@ -136,7 +136,7 @@ def main():
         paxproLogo.save( "data/paxproLogo.scad" )
 
         # Simulate the X-ray diffraction pattern from the PyPaxPro-Logo!
-        material = pypax.OpenSCADMaterial()
+        material = pypax.CSGMaterial()
         material.addModule( paxproLogo )
 
         simulator = pypax.GenericScattering("LogoScat")
