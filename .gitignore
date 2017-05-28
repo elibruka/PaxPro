@@ -8,9 +8,9 @@ doxyDoc/*
 *.out
 data/*
 include/config.h
-PythonWrapper/*_*
-PythonWrapper/pypaxpro.py
-PythonWrapper/pypaxpro.pyc
+pypaxpro/*_*
+pypaxpro/pypaxpro.py
+pypaxpro/pypaxpro.pyc
 src/CMakeFiles/progress.marks
 Examples/*.o
 *.o
