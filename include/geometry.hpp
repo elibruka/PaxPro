@@ -13,7 +13,9 @@ namespace geom
     Part( const char* name ): name(name){};
     ~Part();
     Part( const Part &other );
-    Part& operator =( const Part &rhs );
+
+    /** Disable the assignment operator as it is not consistent with the Python interface */
+    Part& operator =( const Part &rhs ) = delete;
 
     /** Make union with the new shape */
     void add( Shape &shape );
@@ -35,6 +37,9 @@ namespace geom
 
     /** Saves the object including differences and unions */
     void save( const char* fname ) const;
+
+    /** Returns the openSCAD discription */
+    void openSCADDescription( std::string &description ) const;
 
     /** Returns the name of the part */
     const std::string& getName() const { return name; };
@@ -61,7 +66,9 @@ namespace geom
     Module( const char* name ): name(name){};
     ~Module();
     Module( const Module &other );
-    Module& operator =( const Module &rhs );
+
+    /** Disable the assignment operator as it is not consistent with the Python interface */
+    Module& operator =( const Module &rhs ) = delete;
 
     /** Adds a new part */
     void add( Part &newpart );
@@ -80,6 +87,9 @@ namespace geom
 
     /** Saves the individual parts to openSCAD files */
     void saveIndividualParts( const char* prefix );
+
+    /** Saves the module to a file */
+    void save( const char* fname ) const;
   private:
     std::vector<Part*> parts;
     std::vector<Operation_t> operations;

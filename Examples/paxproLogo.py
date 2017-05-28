@@ -131,7 +131,7 @@ def main():
         paxproLogo.add( letterP2 )
         paxproLogo.add( letterR )
         paxproLogo.add( letterO )
-        #paxproLogo.save( "data/paxproLogo.scad" )
+        paxproLogo.save( "data/paxproLogo.scad" )
 
         # Simulate the X-ray diffraction pattern from the PyPaxPro-Logo!
         material = pypax.OpenSCADMaterial()

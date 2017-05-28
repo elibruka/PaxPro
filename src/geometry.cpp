@@ -46,15 +46,10 @@ void geom::Part::swap( const Part &other )
     shapes.push_back( other.shapes[i]->clone() );
     operations.push_back( other.operations[i] );
   }
+  delta = other.delta;
+  beta = other.beta;
   ownShapeObjects = true;
 }
-
-geom::Part& geom::Part::operator =( const geom::Part &rhs )
-{
-  this->swap(rhs);
-  return *this;
-}
-
 
 void geom::Part::add( Shape &shape )
 {
@@ -120,9 +115,24 @@ void geom::Part::save( const char* fname ) const
     return;
   }
 
-  string everything;
+  std::string description;
+  openSCADDescription( description );
 
-  shapes[0]->openSCADExport( everything );
+  ofstream out;
+  out.open(fname);
+  if ( !out.good() )
+  {
+    throw( runtime_error("Could not open openSCAD output file!") );
+  }
+  out << description;
+  out.close();
+
+  cout << "Part saved to " << fname << endl;
+}
+
+void geom::Part::openSCADDescription( string &description ) const
+{
+  shapes[0]->openSCADExport( description );
   for ( unsigned int i=1;i<shapes.size();i++ )
   {
     string specifier;
@@ -137,18 +147,8 @@ void geom::Part::save( const char* fname ) const
     }
     string osccode;
     shapes[i]->openSCADExport( osccode );
-    //osccode += "\n";
-    everything =  specifier+everything+osccode+"}\n";
+    description =  specifier+description+osccode+"}\n";
   }
-
-  ofstream out;
-  out.open(fname);
-  if ( !out.good() )
-  {
-    throw( runtime_error("Could not open openSCAD output file!") );
-  }
-  out << everything;
-  out.close();
 }
 
 void geom::Part::translate( double x, double y, double z )
@@ -183,12 +183,6 @@ geom::Module::~Module()
 geom::Module::Module( const geom::Module &other )
 {
   this->swap( other );
-}
-
-geom::Module& geom::Module::operator =( const geom::Module &rhs )
-{
-  this->swap( rhs );
-  return *this;
 }
 
 void geom::Module::add( Part &part )
@@ -278,5 +272,41 @@ void geom::Module::swap( const geom::Module &other )
     parts.push_back( new geom::Part( *other.parts[i]) );
     operations.push_back( other.operations[i] );
   }
+
   ownPartObjects = true;
+}
+
+void geom::Module::save( const char* fname ) const
+{
+  string description;
+  parts[0]->openSCADDescription( description );
+  for ( unsigned int i=1;i<parts.size();i++ )
+  {
+    string specifier;
+    switch ( operations[i] )
+    {
+      case Operation_t::UNION:
+        specifier = "union(){\n";
+        break;
+      case Operation_t::DIFFERENCE:
+        specifier = "difference(){\n";
+        break;
+    }
+    string osccode;
+    parts[i]->openSCADDescription( osccode );
+    description =  specifier+description+osccode+"}\n";
+  }
+
+  ofstream out;
+  out.open( fname );
+
+  if ( !out.good() )
+  {
+    cout << "Could not open file " << fname;
+    return;
+  }
+
+  out << description;
+  out.close();
+  cout << "Module saved to " << fname << endl;
 }
