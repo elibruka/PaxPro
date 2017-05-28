@@ -6,7 +6,7 @@ wave equation.
 First install all dependencies.
 There are two scripts that should install the dependencies that are available
 via *apt-get* (debian systems) or *dnf* (fedora).
-[VISA](https://github.com/davidkleiven/VISA]) needs to be downloaded and
+[VISA](https://github.com/davidkleiven/VISA) needs to be downloaded and
 compiled as this is not available on the package systems.
 Hence, on Debian systems run
 ```bash
