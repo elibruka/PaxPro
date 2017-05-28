@@ -7,7 +7,7 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 
 def main():
-    runSimulation = True
+    runSimulation = False
     fname = "data/paxproLogoScattering.h5"
     delta_Au = 4.9E-5
     delta_SiO2 = 8.9E-6
@@ -175,9 +175,9 @@ def main():
         exitPhase = np.array( hf.get("data/exitPhase") )
 
     fig = plt.figure()
-    ax1 = fig.add_subplot(1,2,1)
+    ax1 = fig.add_subplot(1,2,2)
     ax1.imshow(ff, extent=[qmin,qmax,qmin,qmax], origin="lower", cmap="nipy_spectral", aspect="auto", norm=mpl.colors.LogNorm())
-    ax2 = fig.add_subplot(1,2,2)
+    ax2 = fig.add_subplot(1,2,1)
     ax2.imshow( exitPhase, cmap="inferno", origin="lower", aspect="auto", \
     extent=[ymin,ymax,xmin,xmax] )
     ax1.set_xlabel("$q_y$ (nm$^{-1}$)")
