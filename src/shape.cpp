@@ -125,7 +125,6 @@ void geom::Shape::inverseTransform( double &x, double &y, double &z ) const
 
 void geom::Shape::scale( double factor, geom::Axis_t axis )
 {
-  throw ( runtime_error("The invserse transformation does no longer work for scaling!") );
   arma::mat matrix(4,4);
   matrix.eye();
   switch ( axis )

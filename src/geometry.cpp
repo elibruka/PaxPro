@@ -167,6 +167,14 @@ void geom::Part::rotate( double angleDeg, geom::Axis_t axis )
   }
 }
 
+void geom::Part::scale( double factor, geom::Axis_t axis )
+{
+  for ( unsigned int i=0;i<shapes.size();i++ )
+  {
+    shapes[i]->scale( factor, axis );
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 geom::Module::~Module()
 {
@@ -238,6 +246,14 @@ void geom::Module::rotate( double angleDeg, geom::Axis_t axis )
   for ( unsigned int i=0;i<parts.size();i++ )
   {
     parts[i]->rotate( angleDeg, axis );
+  }
+}
+
+void geom::Module::scale( double factor, geom::Axis_t axis )
+{
+  for ( unsigned int i=0;i<parts.size();i++ )
+  {
+    parts[i]->scale( factor, axis );
   }
 }
 

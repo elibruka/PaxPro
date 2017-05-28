@@ -29,6 +29,9 @@ namespace geom
     /** Rotate the object */
     void rotate( double angle, Axis_t axis );
 
+    /** Scales an object along axis */
+    void scale( double factor, Axis_t axis );
+
     /** Returns true if is inside */
     bool isInside( double x, double y, double z ) const;
 
@@ -84,6 +87,9 @@ namespace geom
 
     /** Rotate the entire module */
     void rotate( double angleDeg, Axis_t axis );
+
+    /** Scales an object along axis */
+    void scale( double factor, Axis_t axis );
 
     /** Saves the individual parts to openSCAD files */
     void saveIndividualParts( const char* prefix );
