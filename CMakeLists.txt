@@ -144,7 +144,7 @@ add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp)
 target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
 
 add_custom_target( pypaxpro ALL
-WORKING_DIRECTORY pypaxpro COMMAND bash createPythonModule.sh )
+WORKING_DIRECTORY pypaxpro COMMAND bash createPythonModule.sh DEPENDS paxpro )
 
 
 if ( GTEST_FOUND )
