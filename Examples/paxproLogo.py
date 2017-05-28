@@ -1,13 +1,17 @@
 import sys
-sys.path.insert(0,"/home/dkleiven/Documents/PaxPro/PythonWrapper")
+sys.path.append("../")
+sys.path.append("./")
+import pyconfig
+sys.path.insert(0,pyconfig.pythonpath)
 import pypaxpro as pypax
+print(pypax.__file__)
 import numpy as np
 import h5py as h5
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 
 def main():
-    runSimulation = False
+    runSimulation = True
     fname = "data/paxproLogoScattering.h5"
     delta_Au = 4.9E-5
     delta_SiO2 = 8.9E-6
@@ -16,8 +20,6 @@ def main():
     if ( runSimulation ):
         thickness = 200.0
         height = 1000.0
-
-        sphere = pypax.ParaxialSimulation("TestSim")
         paxproLogo = pypax.Module("paxLogo")
 
         # Create the letter P
