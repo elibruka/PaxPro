@@ -17,6 +17,7 @@ include_directories( /usr/lib/x86_64-linux-gnu/hdf5/serial/include )
 set( INSTALL_INC_DIR /usr/local/include )
 set( INSTALL_LIB_DIR /usr/local/lib )
 set( INSTALL_EXEC_DIR /usr/local/bin )
+set( INSTALL_PYTHON_DIR /usr/local/lib/python/paxpro )
 
 # ========================== FIND ALL LIBRARIES ================================
 link_directories( /usr/local/lib )
@@ -115,7 +116,13 @@ set( LIB ${LIB} ${FFTW_LIB} )
 set( LIB ${LIB} "m") # Add C-math library
 include_directories( FFTW_INC )
 
+find_package( GTest )
+set( LIB ${LIB} ${GTEST_LIBRARIES} )
+include_directories( ${GTEST_INCLUDE_DIRS} )
+MESSAGE( STATUS ${GTEST_LIBRARIES})
+
 configure_file( include/config.h.in include/config.h)
+configure_file( pyconfig.py.in pyconfig.py )
 #=========================== COMPILE LIBRARY ===================================
 
 add_subdirectory( src )
@@ -124,9 +131,24 @@ FILE( GLOB TPPFILES "include/*.tpp" )
 install( FILES ${HEADERFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES ${TPPFILES} DESTINATION ${INSTALL_INC_DIR}/PaxPro )
 install( FILES "paxpro++" DESTINATION ${INSTALL_EXEC_DIR} )
+install( FILES pypaxpro/pypaxpro.py pypaxpro/_pypaxpro.so DESTINATION ${INSTALL_PYTHON_DIR} )
 #========================= EXAMPLES ============================================
 add_executable( sphere.out Examples/sphere.cpp )
-target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+#target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+target_link_libraries( sphere.out ${LIB} paxpro )
 
 add_executable( waveguide2D.out Examples/waveguide2D.cpp )
 target_link_libraries( waveguide2D.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
+
+add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp)
+target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
+
+add_custom_target( pypaxpro ALL
+WORKING_DIRECTORY pypaxpro COMMAND bash createPythonModule.sh DEPENDS paxpro )
+
+
+if ( GTEST_FOUND )
+  include_directories( unittest )
+  add_executable( alltests.out unittest/alltests.cpp )
+  target_link_libraries( alltests.out ${LIB} paxpro)
+endif()
