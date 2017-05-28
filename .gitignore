@@ -8,7 +8,8 @@ doxyDoc/*
 *.out
 data/*
 include/config.h
-pypaxpro/*_*
+pypaxpro/__pycache__/*
+pypaxpro/*_wrap*
 pypaxpro/pypaxpro.py
 pypaxpro/pypaxpro.pyc
 src/CMakeFiles/progress.marks
