@@ -1,5 +1,6 @@
 # Bash script that will install the dependencies available fedora
 
+dnf install cmake
 dnf install lapack-devel lapack-static
 dnf install openblas openblas-openmp
 dnf install gsl gsl-devel
