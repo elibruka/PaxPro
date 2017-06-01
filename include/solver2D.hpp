@@ -100,7 +100,8 @@ protected:
   unsigned int Nx{0};
   unsigned int Nz{0};
   bool ownsParaxialEquationObject{true};
-  double stepX{1.0}, stepZ{1.0};
+  double stepX{1.0};
+  double stepZ{1.0};
   double xmin{0.0};
   double zmin{0.0};
   double wavenumber{1.0};
