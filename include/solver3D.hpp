@@ -4,6 +4,7 @@
 #include <climits>
 #include "solver.hpp"
 #include <visa/visa.hpp>
+#include "config.h"
 
 class ParaxialSimulation;
 
@@ -40,12 +41,16 @@ public:
   /** Set plot limits */
   void setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax );
 
+  /** Set the plot limits */
+  void setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax, bool intensityLogScale );
+
   /** Updates the dimensions of the arrays */
   virtual void updateDimensionsOfArrays() override;
 protected:
   arma::cx_cube *solution{NULL};
   arma::cx_mat *currentSolution{NULL};
   arma::cx_mat *prevSolution{NULL};
+  bool logScaleIntensity{false};
 
   // Some parameters
   unsigned int Nx, Ny, Nz;

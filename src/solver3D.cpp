@@ -150,6 +150,11 @@ void Solver3D::step()
   if ( realTimeVis )
   {
     arma::mat values = arma::flipud( arma::abs( *currentSolution ) );
+
+    if ( logScaleIntensity )
+    {
+      values = arma::log10(values);
+    }
     plots->get("Intensity").setImg(values);
     values = arma::flipud( -arma::arg( *currentSolution ) );
     plots->get("Phase").setImg( values );
@@ -207,7 +212,7 @@ void Solver3D::realTimeVisualization()
   plots->addPlot("Intensity");
   plots->addPlot("Phase");
   typedef visa::Colormaps::Colormap_t cmap_t;
-  plots->get("Intensity").setCmap( cmap_t::NIPY_SPECTRAL );
+  plots->get("Intensity").setCmap( cmap_t::VIRIDIS );
   plots->get("Phase").setCmap( cmap_t::NIPY_SPECTRAL );
   plots->get("Intensity").setColorLim(0.0,1.1);
   plots->get("Phase").setColorLim(-3.14159,3.14159);
@@ -215,8 +220,21 @@ void Solver3D::realTimeVisualization()
 
 void Solver3D::setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax )
 {
+  setPlotLimits( intensityMin, intensityMax, phaseMin, phaseMax, false );
+}
+
+void Solver3D::setPlotLimits( double intensityMin, double intensityMax, double phaseMin, double phaseMax, bool intensityLogScale )
+{
   if ( plots == NULL ) return;
-  plots->get("Intensity").setColorLim( intensityMin, intensityMax );
+  logScaleIntensity = intensityLogScale;
+  if ( intensityLogScale )
+  {
+    plots->get("Intensity").setColorLim( log10(intensityMin), log10(intensityMax) );
+  }
+  else
+  {
+    plots->get("Intensity").setColorLim( intensityMin, intensityMax );
+  }
   plots->get("Phase").setColorLim( phaseMin, phaseMax );
 }
 
