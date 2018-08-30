@@ -1,4 +1,4 @@
-#include "genericScattering.hpp"
+#include <PaxPro/genericScattering.hpp>
 #include <iostream>
 
 using namespace std;

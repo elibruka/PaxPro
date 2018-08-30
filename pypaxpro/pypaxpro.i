@@ -4,6 +4,7 @@
 %include "exception.i"
 %module pypaxpro
 %{
+  #define SWIG_FILE_WITH_INIT
   #include "paraxialSimulation.hpp"
   #include "genericScattering.hpp"
   #include "materialFunction.hpp"
