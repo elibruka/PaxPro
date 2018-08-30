@@ -26,6 +26,12 @@ su
 make install
 ```
 
+# Troubleshooting
+On Ubuntu the following **CPATH** was needed
+```bash
+ export CPATH=/usr/include/python3.6m/:/usr/lib/x86_64-linux-gnu/hdf5/serial/include:/usr/include/jsoncpp/
+ ```
+
 # Dependencies
 The library depends on the following libraries:
 * [Lapack](http://www.netlib.org/lapack/)
