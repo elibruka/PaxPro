@@ -41,6 +41,8 @@ before_install:
   - cd ..
 
 install:
+  - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/include
+  - export LIBRARY_PATH=${LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
   - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - make
   - cat pypaxpro/config.sh
@@ -51,6 +53,7 @@ install:
   - make primitiveGeomExample.out
 
 script:
+  - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
   - mkdir data
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
