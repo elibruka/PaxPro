@@ -2,7 +2,8 @@ language: python
 
 before_install:
   - sudo apt-get install cmake
-  - sudo apt-get install liblapacke-dev liblapacke
+  # - sudo apt-get install liblapacke-dev liblapacke
+  - sudo apt-get install liblapack-dev
   - sudo apt-get install libopenblas-dev libopenblas-base
   - sudo apt-get install libgsl0-dev
   - sudo apt-get install libjsoncpp-dev
