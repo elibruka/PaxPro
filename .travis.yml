@@ -8,14 +8,20 @@ before_install:
   - sudo apt-get install libjsoncpp-dev
   - sudo apt-get install libhdf5-dev libhdf5-serial-dev
   - sudo apt-get install libarmadillo-dev
-  - sudo apt-get install libsfml-dev
   - sudo apt-get install libfltk1.3-dev
   - sudo apt-get install libfftw3-dev
   - sudo apt-get install libgtest-dev
   - sudo apt-get install swig
+  - wget https://www.sfml-dev.org/files/SFML-2.5.0-linux-gcc-64-bit.tar.gz
+  - mkdir sfml_tmp
+  - tar -xzvf SFML-2.5.0-linux-gcc-64-bit.tar.gz -C sfml_tmp
+  - bash configure.sh
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
+  - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/include
+  - export LIBRARY_PATH=${LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
   - git clone https://github.com/davidkleiven/VISA.git
   - cd VISA/
-  - cmake .
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - make
   - sudo make install
   - cd ..
