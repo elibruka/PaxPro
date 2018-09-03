@@ -8,6 +8,7 @@ add_definitions( -O3 )
 #add_definitions( -DCURRENT_DIR=${CMAKE_CURRENT_SOURCE_DIR})
 set( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fopenmp")
 list(APPEND CMAKE_MODULE_PATH "/usr/share/SFML/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH ${JSON_DIR})
 
 # Add libraries
 include_directories( include )
