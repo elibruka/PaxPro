@@ -146,15 +146,15 @@ install( FILES "paxpro++" DESTINATION ${INSTALL_EXEC_DIR} )
 install( FILES pypaxpro/pypaxpro.py pypaxpro/_pypaxpro.so DESTINATION ${INSTALL_PYTHON_DIR} )
 
 #========================= EXAMPLES ============================================
-add_executable( sphere.out Examples/sphere.cpp )
+add_executable( sphere.out Examples/sphere.cpp  EXCLUDE_FROM_ALL)
 MESSAGE( STATUS ${LIB} )
 #target_link_libraries( sphere.out ${LIB} ${CMAKE_CURRENT_SOURCE_DIR}/src/libpaxpro.a )
 target_link_libraries( sphere.out ${LIB} paxpro )
 
-add_executable( waveguide2D.out Examples/waveguide2D.cpp )
+add_executable( waveguide2D.out Examples/waveguide2D.cpp  EXCLUDE_FROM_ALL)
 target_link_libraries( waveguide2D.out ${LIB} paxpro )
 
-add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp)
+add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp EXCLUDE_FROM_ALL)
 target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
 
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)

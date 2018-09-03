@@ -7,11 +7,18 @@ before_install:
   - sudo apt-get install libgsl0-dev
   - sudo apt-get install libjsoncpp-dev
   - sudo apt-get install libhdf5-dev libhdf5-serial-dev
-  - sudo apt-get install libarmadillo-dev
   - sudo apt-get install libfltk1.3-dev
   - sudo apt-get install libfftw3-dev
   - sudo apt-get install libgtest-dev
   - sudo apt-get install swig
+  - wget http://sourceforge.net/projects/arma/files/armadillo-9.100.5.tar.xz
+  - mkdir arma_temp
+  - tar xf armadillo-9.100.5.tar.xz -C arma_temp
+  - cd arma_temp
+  - ./configure
+  - make
+  - sudo make install
+  - cd ..
   - wget https://www.sfml-dev.org/files/SFML-2.5.0-linux-gcc-64-bit.tar.gz
   - mkdir sfml_tmp
   - tar -xzvf SFML-2.5.0-linux-gcc-64-bit.tar.gz -C sfml_tmp
