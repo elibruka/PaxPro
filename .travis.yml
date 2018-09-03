@@ -15,18 +15,18 @@ before_install:
   - wget https://www.sfml-dev.org/files/SFML-2.5.0-linux-gcc-64-bit.tar.gz
   - mkdir sfml_tmp
   - tar -xzvf SFML-2.5.0-linux-gcc-64-bit.tar.gz -C sfml_tmp
-  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/include
   - export LIBRARY_PATH=${LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
   - git clone https://github.com/davidkleiven/VISA.git
   - cd VISA/
+  - bash configure.sh
   - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - make
   - sudo make install
   - cd ..
 
 install:
-  - cmake .
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - make
   - sudo make install
   - mkdir data
