@@ -39,8 +39,9 @@ before_install:
   - cd ..
 
 install:
-  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML -DJSON_DIR=${TRAVIS_BUILD_DIR}/cmake_modules/
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
   - make
+  - cat pypaxpro/config.sh
   - sudo make install
   - mkdir data
   - make sphere.out
@@ -48,6 +49,7 @@ install:
   - make primitiveGeomExample.out
 
 script:
+  - mkdir data
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
   - export PYTHONPATH=${PYTHONPATH:/usr/local/lib/python/PaxPro

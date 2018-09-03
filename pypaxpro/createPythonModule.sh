@@ -13,4 +13,4 @@ echo "Link arguments: "
 echo ${LIB_LINK}
 swig -modern -I../include -c++ -python pypaxpro.i
 c++ -fPIC -std=c++11 -c pypaxpro_wrap.cxx ${INC_ARG}
-c++ -shared pypaxpro_wrap.o ../src/libpaxpro.a -L/usr/local/lib $(python3-config --ldflags) ${LIB_LINK}
+c++ -shared pypaxpro_wrap.o ../src/libpaxpro.a -L/usr/local/lib $(python3-config --ldflags) ${LIB_LINK} -o _pypaxpro.so

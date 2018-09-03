@@ -1,16 +1,12 @@
 import sys
-sys.path.append("../")
-sys.path.append("./")
-import pyconfig
-sys.path.insert(0,pyconfig.pythonpath)
 import pypaxpro as pypax
 print(pypax.__file__)
 import numpy as np
 import h5py as h5
 import matplotlib as mpl
-from matplotlib import pyplot as plt
 
 def main():
+    show_plot = False
     runSimulation = True
     fname = "data/paxproLogoScattering.h5"
     delta_Au = 4.9E-5
@@ -176,17 +172,18 @@ def main():
         ff = np.array( ffdset )
         exitPhase = np.array( hf.get("data/exitPhase") )
 
-    fig = plt.figure()
-    ax1 = fig.add_subplot(1,2,2)
-    ax1.imshow(ff, extent=[qmin,qmax,qmin,qmax], origin="lower", cmap="nipy_spectral", aspect="auto", norm=mpl.colors.LogNorm())
-    ax2 = fig.add_subplot(1,2,1)
-    ax2.imshow( exitPhase, cmap="inferno", origin="lower", aspect="auto", \
-    extent=[ymin,ymax,xmin,xmax] )
-    ax1.set_xlabel("$q_y$ (nm$^{-1}$)")
-    ax1.set_ylabel("$q_x$ (nm$^{-1}$)")
-    ax2.set_ylabel("$x$ (nm)")
-    ax2.set_xlabel("$y$ (nm)")
-    plt.show()
+    if show_plot:
+        fig = plt.figure()
+        ax1 = fig.add_subplot(1,2,2)
+        ax1.imshow(ff, extent=[qmin,qmax,qmin,qmax], origin="lower", cmap="nipy_spectral", aspect="auto", norm=mpl.colors.LogNorm())
+        ax2 = fig.add_subplot(1,2,1)
+        ax2.imshow( exitPhase, cmap="inferno", origin="lower", aspect="auto", \
+        extent=[ymin,ymax,xmin,xmax] )
+        ax1.set_xlabel("$q_y$ (nm$^{-1}$)")
+        ax1.set_ylabel("$q_x$ (nm$^{-1}$)")
+        ax2.set_ylabel("$x$ (nm)")
+        ax2.set_xlabel("$y$ (nm)")
+        plt.show()
 
 if __name__ == "__main__":
     main()
