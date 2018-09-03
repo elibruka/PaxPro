@@ -4,7 +4,7 @@ INCLUDE_DIR=$1
 LIBS=$2
 echo "Creating python module..."
 source config.sh
-export LIBRARY_PATH=${LIB_PATH}
+export LIBRARY_PATH=${LIBRARY_PATH}:${LIB_PATH}
 echo "Library path:"
 echo ${LIB}
 echo "Include arguments: "
