@@ -157,7 +157,10 @@ def main():
         simulator.FFTPadLength = 32768
         simulator.setMaterial( material )
         simulator.solve()
-        simulator.save( fname )
+        simulator.save(fname)
+
+        # Delete the simulator. NOTE: HDF5 file is closed this way
+        del simulator
 
     # Read the file and plot the results
     with h5.File( fname, 'r' ) as hf:

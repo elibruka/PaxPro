@@ -1,11 +1,19 @@
 import sys
 
 outfile = "pypaxpro/config.sh"
+logfile= "raw_input.txt"
+
+not_lib = ["python"]
+
 def main(argv):
+    with open(logfile, 'w') as out:
+        for arg in argv:
+            out.write("{}\n".format(arg))
+
     libs = []
     include_dirs = []
     for item in argv:
-        if item.find(".") != -1:
+        if item.find(".so") != -1:
             libs.append(item)
         elif item.find("/") != -1:
             include_dirs.append(item)
@@ -18,7 +26,9 @@ def main(argv):
             unique_paths.append(path)
         link_arg = "-l" + lib.rpartition("/")[-1].rpartition("lib")[-1]
         link_arg = link_arg.rpartition(".")[0]
-        link_lib.append(link_arg)
+
+        if link_arg not in link_lib:
+            link_lib.append(link_arg)
 
     with open(outfile, 'w') as out:
         out.write("LIB_PATH=")
