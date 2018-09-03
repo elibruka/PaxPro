@@ -14,11 +14,11 @@ before_install:
   - wget http://sourceforge.net/projects/arma/files/armadillo-9.100.5.tar.xz
   - mkdir arma_temp
   - tar xf armadillo-9.100.5.tar.xz -C arma_temp
-  - cd arma_temp
+  - cd arma_temp/armadillo-9.100.5/
   - ./configure
   - make
   - sudo make install
-  - cd ..
+  - cd ${TRAVIS_BUILD_DIR}
   - wget https://www.sfml-dev.org/files/SFML-2.5.0-linux-gcc-64-bit.tar.gz
   - mkdir sfml_tmp
   - tar -xzvf SFML-2.5.0-linux-gcc-64-bit.tar.gz -C sfml_tmp
