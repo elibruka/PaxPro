@@ -50,8 +50,7 @@ install:
 
 script:
   - export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
-  - mkdir data
+  - mkdir -p data
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
   - export PYTHONPATH=${PYTHONPATH:/usr/local/lib/python/PaxPro
-  - python
