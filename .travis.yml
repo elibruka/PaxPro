@@ -13,7 +13,6 @@ before_install:
   - sudo apt-get install libgtest-dev
   - sudo apt-get install python-dev
   - sudo apt-get install libsfml-dev
-  - locate FindSFML
   - wget http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz
   - tar xf swig-3.0.12.tar.gz
   - cd swig-3.0.12
@@ -32,7 +31,7 @@ before_install:
   - git clone https://github.com/davidkleiven/VISA.git
   - cd VISA/
   - bash configure.sh
-  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/util/
   - make
   - sudo make install
   - cd ..
@@ -40,7 +39,7 @@ before_install:
 install:
   - export CPATH=${CPATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/include
   - export LIBRARY_PATH=${LIBRARY_PATH}:${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib
-  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML
+  - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/util/
   - make
   - cat pypaxpro/config.sh
   - sudo make install
