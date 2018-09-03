@@ -24,7 +24,6 @@ before_install:
   - make
   - sudo make install
   - cd ..
-  - git clone https://github.com/rpavlik/cmake-modules.git
 
 install:
   - cmake . -DSFML_DIR=${TRAVIS_BUILD_DIR}/sfml_tmp/SFML-2.5.0/lib/cmake/SFML -DJSON_DIR=${TRAVIS_BUILD_DIR}/cmake_modules/
