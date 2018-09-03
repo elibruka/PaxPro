@@ -6,7 +6,7 @@ install:
   - sudo apt-get install libopenblas-dev libopenblas-base
   - sudo apt-get install libgsl0-dev
   - sudo apt-get install libjsoncpp-dev
-  - sudo apt-get install libhdf5-dev libhdf5-mpi-dev libhdf5-openmpi-dev libhdf5-serial-dev
+  - sudo apt-get install libhdf5-dev libhdf5-serial-dev
   - sudo apt-get install libarmadillo-dev
   - sudo apt-get install libsfml-dev
   - sudo apt-get install libfltk1.3-dev
@@ -19,6 +19,5 @@ install:
   - mkdir data
 
 script:
-  - ./sphere.out
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
