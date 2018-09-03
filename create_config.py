@@ -5,7 +5,7 @@ def main(argv):
     libs = []
     include_dirs = []
     for item in argv:
-        if item.find(".so") != -1:
+        if item.find(".") != -1:
             libs.append(item)
         elif item.find("/") != -1:
             include_dirs.append(item)
@@ -17,7 +17,7 @@ def main(argv):
         if path not in unique_paths:
             unique_paths.append(path)
         link_arg = "-l" + lib.rpartition("/")[-1].rpartition("lib")[-1]
-        link_arg = link_arg.replace(".so", "")
+        link_arg = link_arg.rpartition(".")[0]
         link_lib.append(link_arg)
 
     with open(outfile, 'w') as out:
