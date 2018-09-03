@@ -10,7 +10,13 @@ before_install:
   - sudo apt-get install libfltk1.3-dev
   - sudo apt-get install libfftw3-dev
   - sudo apt-get install libgtest-dev
-  - sudo apt-get install swig
+  - wget http://prdownloads.sourceforge.net/swig/swig-3.0.12.tar.gz
+  - tar xf swig-3.0.12.tar.gz -C swig3012
+  - cd swig3012
+  - ./configure
+  - make
+  - sudo make install
+  - cd ${TRAVIS_BUILD_DIR}
   - wget http://sourceforge.net/projects/arma/files/armadillo-9.100.5.tar.xz
   - mkdir arma_temp
   - tar xf armadillo-9.100.5.tar.xz -C arma_temp
