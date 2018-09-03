@@ -76,7 +76,7 @@ endif()
 
 find_package( OpenGL REQUIRED )
 
-include_directories( FLTK_INCLUDE_DIR )
+include_directories( ${FLTK_INCLUDE_DIR} )
 set( LIB ${LIB} ${FLTK_BASE_LIBRARY} )
 set( LIB ${LIB} ${FLTK_GL_LIBRARY} )
 set( LIB ${LIB} ${FLTK_FORMS_LIBRARY} )
@@ -99,7 +99,7 @@ if ( NOT FFTW_INC )
 endif()
 set( LIB ${LIB} ${FFTW_LIB} )
 set( LIB ${LIB} "m") # Add C-math library
-include_directories( FFTW_INC )
+include_directories( ${FFTW_INC} )
 
 find_package( GTest )
 set( LIB ${LIB} ${GTEST_LIBRARIES} )
@@ -151,8 +151,11 @@ target_link_libraries( waveguide2D.out ${LIB} paxpro )
 add_executable( primitiveGeomExample.out Examples/primitiveGeomExample.cpp)
 target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
 
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+
+add_custom_target(prepare_pypaxpro ALL COMMAND python create_config.py ${CMAKE_CURRENT_SOURCE_DIR} ${LIB} ${dirs} DEPENDS paxpro)
 add_custom_target( pypaxpro ALL
-WORKING_DIRECTORY pypaxpro COMMAND bash createPythonModule.sh DEPENDS paxpro )
+WORKING_DIRECTORY pypaxpro COMMAND bash createPythonModule.sh ${dirs} ${LIB} DEPENDS prepare_pypaxpro)
 
 
 if ( GTEST_FOUND )

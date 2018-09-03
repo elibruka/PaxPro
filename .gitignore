@@ -21,3 +21,5 @@ unittest/libpaxprotesting.a
 unittest/CMakeFiles/*
 pyconfig.py
 pyconfig.pyc
+
+pypaxpro/config.sh
