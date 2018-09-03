@@ -53,4 +53,4 @@ script:
   - mkdir -p data
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
-  - export PYTHONPATH=${PYTHONPATH:/usr/local/lib/python/PaxPro
+  - export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python/PaxPro
