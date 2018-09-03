@@ -37,6 +37,9 @@ install:
   - make
   - sudo make install
   - mkdir data
+  - make sphere.out
+  - make waveguide2D.out
+  - make primitiveGeomExample.out
 
 script:
   - ./waveguide2D.out
