@@ -58,4 +58,5 @@ script:
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
   - export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python/paxpro/
+  - export LD_LIBRARY_PATH=/usr/local/lib
   - python Examples/simple_example.py
