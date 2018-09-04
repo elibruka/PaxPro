@@ -3,7 +3,7 @@ language: python
 python:
   - "3.6"
   - "3.5"
-  
+
 before_install:
   - sudo apt-get install cmake
   # - sudo apt-get install liblapacke-dev liblapacke
@@ -57,5 +57,5 @@ script:
   - mkdir -p data
   - ./waveguide2D.out
   - ./primitiveGeomExample.out
-  - export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python/PaxPro
+  - export PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python/paxpro/
   - python Examples/simple_example.py
