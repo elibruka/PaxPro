@@ -173,8 +173,10 @@ void FFTSolver3D::refraction( unsigned int step )
       evaluateRefractiveIndex( refr, z1 );
       double refrMin = refr.min();
       double refrMax = refr.max();
-
-      //plots->get("Intensity").setColorLim( refrMin, refrMax );
+      cout << refrMin << " " << refrMax << endl;
+      
+		
+      plots->get("Intensity").setColorLim( refrMin, refrMax );
       plots->get("Intensity").setImg( refr );
       plots->draw();
     }

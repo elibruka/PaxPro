@@ -68,6 +68,7 @@ void GenericScattering::init()
         fft3Dsolver.visualizeRealSpace();
         fft3Dsolver.setIntensityMinMax( intensityMin, intensityMax );
         fft3Dsolver.setPhaseMinMax( phaseMin, phaseMax );
+        fft3Dsolver.overlayGeometry();
         break;
     }
     /*
@@ -174,7 +175,7 @@ void GenericScattering::solve()
   //if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
   //else *reference = adisolver.getLastSolution3D();
 
-  ff.setReference( *reference );
+//   ff.setReference( *reference );
   clog << "Reference solution computed\n";
 
   reset();
