@@ -20,6 +20,13 @@ public:
   /** Set the center of the beam */
   void setCenter( double xc, double yc );
 
+  /** Set the angle relative to the z-axis */
+  void setAngleX(double ang){ angleX = ang; };
+
+  /** Set angle y */
+  void setAngleY(double ang){angleY = ang;};
+
+
   /** Get the beam divergence */
   double beamDivergence() const;
 
@@ -32,6 +39,8 @@ private:
   double waist{1.0};
   double centerX{0.0};
   double centerY{0.0};
+  double angleX{0.0};
+  double angleY{0.0};
 
   // Help functions
   /** Get the rayleigh range */
@@ -45,6 +54,12 @@ private:
 
   /** Get the spot size */
   double spotSize( double z ) const;
+
+  /** Phase factor due to incomming angle */
+  cdouble angle_factorX(double x) const;
+
+  /** Phase factor due to incomming angle */
+  cdouble angle_factorY(double y) const;
 };
 
 #endif
