@@ -174,7 +174,7 @@ void GenericScattering::solve()
   //if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
   //else *reference = adisolver.getLastSolution3D();
 
-  ff.setReference( *reference );
+  if (subtract_reference) ff.setReference( *reference );
   clog << "Reference solution computed\n";
 
   reset();
