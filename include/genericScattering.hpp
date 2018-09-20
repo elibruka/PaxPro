@@ -59,6 +59,7 @@ public:
   double intensityMax{1.0};
   double phaseMin{-3.14159};
   double phaseMax{3.14159};
+  bool subtract_reference{true};
   std::string imgname{""};
   bool realTimeVisualization{false};
   SolverType_t propagator{SolverType_t::FFT};

@@ -34,14 +34,32 @@ cdouble GaussianBeam::get( double x, double z ) const
   double gaussianFactor = exp(-pow(x/spotSize(z-z0),2) );
   cdouble phaseFactor = exp(-im*wavenumber*z0 + 0.5*im*wavenumber*x*x*inverseRadiusOfCurvature(z-z0) \
                           -im*guoyPhase(z-z0));
-  return amplitude*waistRatio*gaussianFactor*phaseFactor;
+  cdouble ang_phaseX = angle_factorX(x);
+  return amplitude*waistRatio*gaussianFactor*phaseFactor*ang_phaseX;
+}
+
+cdouble GaussianBeam::angle_factorX(double x) const
+{
+  double ang_rad = angleX * PI / 180.0;
+  double k = getWavenumber();
+  cdouble im(0.0,1.0);
+  return exp(im*k*sin(ang_rad)*x);
+}
+
+cdouble GaussianBeam::angle_factorY(double y) const
+{
+  double ang_rad = angleY * PI / 180.0;
+  double k = getWavenumber();
+  cdouble im(0.0,1.0);
+  return exp(im*k*sin(ang_rad)*y);
 }
 
 cdouble GaussianBeam::get( double x, double y, double z ) const
 {
   y -= centerY;
   double gaussY = exp( -pow(y/spotSize(z-z0),2) );
-  return get(x,z)*gaussY;
+  cdouble angY = angle_factorY(y);
+  return get(x,z)*gaussY*angY;
 }
 
 void GaussianBeam::setCenter( double xc, double yc )
