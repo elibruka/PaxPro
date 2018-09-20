@@ -37,6 +37,8 @@ double zmax = 5000;
 GenericScattering simulation("slab");
 
 simulation.setBeamWaist(5); // 20
+simulation.setBeamAngleX(0.0);
+simulation.setBeamAngleY(0.0);
 simulation.setMaxScatteringAngle(1.0);
 
 double dx = (xmax-xmin)/512;
@@ -52,6 +54,7 @@ simulation.zmax = zmax;
 simulation.dx = dx;
 simulation.dy = dx;
 simulation.dz = dz;
+simulation.subtract_reference = false;
 
 simulation.downSampleX = 8;
 simulation.downSampleY = 8;
@@ -69,8 +72,6 @@ simulation.setMaterial( material );
 simulation.solve();
 
 simulation.save("slab.h5");
-//arma::mat farF;
-//simulation.getFarField(farF);
 
 
 return 0;

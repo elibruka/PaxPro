@@ -19,6 +19,12 @@ public:
 
   /** Set the waist of the Gaussian beam */
   void setBeamWaist( double waist ){ gbeam.setWaist(waist); };
+  
+  /** Set the angleX of the Gaussian beam */
+  void setBeamAngleX( double angleX ){gbeam.setAngleX(angleX); }; 
+  
+  /** Set the angleY of the Gaussian beam */
+  void setBeamAngleY( double angleY ){gbeam.setAngleY(angleY); };
 
   /** Sets the maximum scattering angle that will be stored */
   void setMaxScatteringAngle( double angMax );

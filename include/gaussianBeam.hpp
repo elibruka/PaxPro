@@ -32,8 +32,6 @@ public:
 
   /** Fills a JSON object with parameters specific to this class */
   void info( Json::Value &obj ) const override;
-  
-  void setAngle(double angle);
 
   /** Returns the waist */
   double getWaist() const{ return waist; };

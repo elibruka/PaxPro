@@ -68,7 +68,7 @@ void GenericScattering::init()
         fft3Dsolver.visualizeRealSpace();
         fft3Dsolver.setIntensityMinMax( intensityMin, intensityMax );
         fft3Dsolver.setPhaseMinMax( phaseMin, phaseMax );
-        fft3Dsolver.overlayGeometry();
+        // fft3Dsolver.overlayGeometry();
         break;
     }
     /*
@@ -172,8 +172,8 @@ void GenericScattering::solve()
       *reference = projSolver.getLastSolution3D();
       break;
   }
-  //if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D();
-  //else *reference = adisolver.getLastSolution3D();
+  // if ( useFFTSolver ) *reference = fft3Dsolver.getLastSolution3D(); Why is this commented out??
+  // else *reference = adisolver.getLastSolution3D();
 
   if (subtract_reference) ff.setReference( *reference );
   clog << "Reference solution computed\n";
