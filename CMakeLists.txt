@@ -17,10 +17,10 @@ include_directories(/usr/include/jsoncpp)
 include_directories( /usr/local/include )
 include_directories( /usr/lib/x86_64-linux-gnu/hdf5/serial/include )
 
-set( INSTALL_INC_DIR /usr/local/include )
-set( INSTALL_LIB_DIR /usr/local/lib )
-set( INSTALL_EXEC_DIR /usr/local/bin )
-set( INSTALL_PYTHON_DIR /usr/local/lib/python/paxpro )
+set( INSTALL_INC_DIR /home/elisabbk/.local/include )
+set( INSTALL_LIB_DIR /home/elisabbk/.local/lib )
+set( INSTALL_EXEC_DIR /home/elisabbk/.local/bin )
+set( INSTALL_PYTHON_DIR /home/elisabbk/.local/lib/python/paxpro )
 
 # ========================== FIND ALL LIBRARIES ================================
 link_directories( /usr/local/lib )
@@ -44,9 +44,10 @@ include_directories(${ZLIB_INCLUDE_DIR})
 set(LIB ${LIB} ${ZLIB_LIBRARIES})
 
 #set(CMAKE_INCLUDE_PATH "/usr/include")
-find_package( Armadillo REQUIRED )
-include_directories(${ARMADILLO_INCLUDE_DIRS})
-set(LIB ${LIB} ${ARMADILLO_LIBRARIES})
+#find_package( Armadillo REQUIRED )
+#include_directories(${ARMADILLO_INCLUDE_DIRS})
+set(LIB ${LIB} /home/davidkl/.local/lib/libarmadillo.so)
+include_directories(/home/davidkl/.local/include)
 
 find_package( HDF5 REQUIRED COMPONENTS C CXX HL)
 include_directories( ${HDF5_INCLUDE_DIRS} )
