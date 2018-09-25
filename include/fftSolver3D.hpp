@@ -82,8 +82,7 @@ private:
   /** Computes the refraction integral when a border has been crossed */
   void refractionIntegral( double x, double y, double z1, double z2, double &delta, double &beta );
 
-  /** Evaluates the refractive index for the purpose of overlay */
-  void evaluateRefractiveIndex( arma::mat &refr, double z ) const;
+
 
   unsigned int nStepsInRefrIntegral{10};
 

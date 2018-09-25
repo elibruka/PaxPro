@@ -31,6 +31,8 @@ public:
 
   /** Get solution 3D  */
   virtual const arma::cx_cube& getSolution3D() const;
+  
+  virtual const arma::cube& getRefractiveIndex3D() const;
 
   /** Get solution 2D */
   virtual const arma::cx_mat& getSolution() const;

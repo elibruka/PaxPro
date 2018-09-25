@@ -149,3 +149,8 @@ void post::ExitPhase::result( const Solver &solver, arma::mat &res )
     resizeMatrix( copy, res );
   }
 }
+
+void post::RefractiveIndex::result( const Solver &solver, arma::cube &res )
+{
+  res = solver.getRefractiveIndex3D();
+}

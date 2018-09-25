@@ -177,5 +177,14 @@ public:
   virtual void result( const Solver &solver, arma::mat &res ) override;
 };
 
+class RefractiveIndex: public post::FieldQuantity
+{
+public:
+  RefractiveIndex(): post::FieldQuantity("delta"){};
+
+  /** Real part of the refractive index 3D version */
+  virtual void result( const Solver &solver, arma::cube &res ) override;
+};
+
 };
 #endif

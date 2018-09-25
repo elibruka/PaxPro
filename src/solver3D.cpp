@@ -14,6 +14,8 @@ Solver3D::~Solver3D()
   delete solution; solution=NULL;
   delete currentSolution; currentSolution=NULL;
   delete prevSolution; prevSolution=NULL;
+  delete refractiveIndex; refractiveIndex=NULL;
+  delete refractiveIndexSlice; refractiveIndexSlice = NULL;
 }
 
 void Solver3D::setSimulator( ParaxialSimulation &sim )
@@ -30,10 +32,14 @@ void Solver3D::setSimulator( ParaxialSimulation &sim )
   delete solution; solution=NULL;
   delete prevSolution; prevSolution=NULL;
   delete currentSolution; currentSolution=NULL;
+  delete refractiveIndex; refractiveIndex=NULL;
+  delete refractiveIndexSlice; refractiveIndexSlice=NULL;
 
   prevSolution = new arma::cx_mat(Ny,Nx);
   currentSolution = new arma::cx_mat(Ny,Nx);
   solution = new arma::cx_cube( downSampledX, downSampledX, downSampledZ+1 );
+  refractiveIndex = new arma::cube(downSampledX, downSampledX, downSampledZ+1 );
+  refractiveIndexSlice = new arma::mat(Nx,Ny);
 
   if ( downSampledX != Nx )
   {
@@ -81,6 +87,7 @@ void Solver3D::copyCurrentSolution( unsigned int step )
   assert( currentSolution->n_cols == prevSolution->n_cols );
 
   *prevSolution = *currentSolution;
+  
 
   if (step%guide->longitudinalDiscretization().downsamplingRatio == 0 )
   {
@@ -102,6 +109,7 @@ void Solver3D::copyCurrentSolution( unsigned int step )
     // Downsample the array
     if ( currZ < solution->n_slices )
     {
+	  evaluateRefractiveIndex(*refractiveIndexSlice,currZ);
       #pragma omp parallel for
       for ( unsigned int i=0;i<solution->n_rows*solution->n_cols;i++ )
       {
@@ -110,6 +118,9 @@ void Solver3D::copyCurrentSolution( unsigned int step )
         //(*solution)(row,col,currZ) = (*currentSolution)( row*deltaX, col*deltaY );
         (*solution)(row,col,currZ) = arma::sum( arma::sum(
           currentSolution->submat( row*deltaX, col*deltaY, row*deltaX+deltaX-1, col*deltaY+deltaY-1) ))/(deltaX*deltaY);
+          
+          (*refractiveIndex)(row,col,currZ) = arma::sum( arma::sum(
+          refractiveIndexSlice->submat( row*deltaX, col*deltaY, row*deltaX+deltaX-1, col*deltaY+deltaY-1) ))/(deltaX*deltaY);
       }
     }
     else
@@ -244,4 +255,30 @@ void Solver3D::updateDimensionsOfArrays()
   // Assign a pointer to the simulation and set the correct size of the solution arrays
   // Hence, this function only needs to call the setSimulator function
   this->setSimulator( *guide );
+}
+
+
+void Solver3D::evaluateRefractiveIndex( arma::mat &refr, double z ) const
+{
+  // Set size to the default values in VISA
+  //unsigned int width = guide->nodeNumberTransverse();
+  //unsigned int height = guide->nodeNumberVertical();
+  //refr.set_size( height, width );
+  //double dx = ( guide->transverseDiscretization().max - guide->transverseDiscretization().min )/width;
+  //double dy = ( guide->verticalDiscretization().max - guide->verticalDiscretization().min )/height;
+
+  double delta, beta;
+  for ( unsigned int i=0;i<refr.n_cols;i++ )
+  {
+    //double x = guide->transverseDiscretization().min + i*dx;
+    double x = guide->getX(i);
+    for ( unsigned int j=0;j<refr.n_rows;j++ )
+    {
+      //double y = guide->verticalDiscretization().min + j*dy;
+      double y = guide->getY(j);
+      guide->getXrayMatProp( x, y, z, delta, beta );
+      refr(j,i) = delta;
+    }
+  }
+  refr = arma::flipud( refr );
 }
