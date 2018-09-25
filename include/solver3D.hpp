@@ -31,6 +31,8 @@ public:
 
   /** Returns the complex solution */
   virtual const arma::cx_cube& getSolution3D() const override;
+  
+  virtual const arma::cube& getRefractiveIndex3D() const override { return *refractiveIndex; };
 
   /** Returns the last solution */
   virtual const arma::cx_mat& getLastSolution3D() const override{ return *prevSolution; };
@@ -47,6 +49,8 @@ public:
   /** Updates the dimensions of the arrays */
   virtual void updateDimensionsOfArrays() override;
 protected:
+  arma::cube *refractiveIndex{NULL};
+  arma::mat *refractiveIndexSlice{NULL};
   arma::cx_cube *solution{NULL};
   arma::cx_mat *currentSolution{NULL};
   arma::cx_mat *prevSolution{NULL};
@@ -68,6 +72,9 @@ protected:
 
   /** Real-time visualization */
   bool realTimeVis{false};
+  
+    /** Evaluates the refractive index for the purpose of overlay */
+  void evaluateRefractiveIndex( arma::mat &refr, double z ) const;
 
   visa::WindowHandler *plots{NULL};
 };

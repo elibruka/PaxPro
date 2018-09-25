@@ -17,7 +17,7 @@ slab.delta=1E-4; //-4
 slab.beta=1E-6; // -6
 
 slab.translate(0.0, -36.5,0.0);
-slab.rotate(-0.2,geom::Axis_t::X); //0.2
+// slab.rotate(-0.2,geom::Axis_t::X); //0.2
 slab.save("slab.scad");
 
 geom::Module slab_mod("slab_module");
@@ -38,7 +38,7 @@ GenericScattering simulation("slab");
 
 simulation.setBeamWaist(5); // 20
 simulation.setBeamAngleX(0.0);
-simulation.setBeamAngleY(0.0);
+simulation.setBeamAngleY(0.2);
 simulation.setMaxScatteringAngle(1.0);
 
 double dx = (xmax-xmin)/512;
@@ -68,6 +68,10 @@ simulation.propagator = GenericScattering::SolverType_t::FFT;
 simulation.FFTPadLength = 32768;
 
 simulation.setMaterial( material );
+post::Intensity intensity;
+simulation.addPostProcessing(intensity);
+post::RefractiveIndex refractiveIndex;
+simulation.addPostProcessing(refractiveIndex);
 
 simulation.solve();
 

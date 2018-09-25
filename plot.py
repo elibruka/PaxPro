@@ -12,8 +12,9 @@ def main():
 	a,b=np.shape(ff)
 	ax = fig.add_subplot(1,1,1)
 	ax.imshow(ff.T,cmap="nipy_spectral",norm=LogNorm())
-	ax.plot(np.array([0,a]),np.array([b/2,b/2]),"k--")
+	ax.plot([0,a],[b/2,b/2],"k--")
 	ax.plot(np.array([a/2,a/2]),np.array([0,b]),"k--")
+	ax.set_title("FarField")
 	plt.show()
 	
 	fig=plt.figure()
@@ -22,11 +23,13 @@ def main():
 	ax.imshow(ei.T,cmap="nipy_spectral",norm=LogNorm())
 	ax.plot([0,a],[b/2,b/2],"k--")
 	ax.plot([a/2,a/2],[0,b],"k--")
+	ax.set_title("ExitIntensity")
 	plt.show()
 	
 	fig=plt.figure()
 	ax = fig.add_subplot(1,1,1)
 	ax.imshow(ep.T,cmap="nipy_spectral")
+	ax.set_title("ExitPhase")
 	plt.show()
 	
 	

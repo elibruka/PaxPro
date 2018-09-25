@@ -284,38 +284,7 @@ void FFTSolver3D::reset()
   }
 }
 
-void FFTSolver3D::evaluateRefractiveIndex( arma::mat &refr, double z ) const
-{
-  // Set size to the default values in VISA
-  //unsigned int width = guide->nodeNumberTransverse();
-  //unsigned int height = guide->nodeNumberVertical();
-  //refr.set_size( height, width );
-  //double dx = ( guide->transverseDiscretization().max - guide->transverseDiscretization().min )/width;
-  //double dy = ( guide->verticalDiscretization().max - guide->verticalDiscretization().min )/height;
 
-  double delta, beta;
-  for ( unsigned int i=0;i<refr.n_cols;i++ )
-  {
-    //double x = guide->transverseDiscretization().min + i*dx;
-    double x = guide->getX(i);
-    for ( unsigned int j=0;j<refr.n_rows;j++ )
-    {
-      //double y = guide->verticalDiscretization().min + j*dy;
-      double y = guide->getY(j);
-      guide->getXrayMatProp( x, y, z, delta, beta );
-      if ( delta > 1E-10 )
-      {
-        refr(j,i) = 0.0;
-      }
-      else
-      {
-        refr(j,i) = 1.0;
-      }
-      //refr(j,i) = delta;
-    }
-  }
-  refr = arma::flipud( refr );
-}
 
 void FFTSolver3D::storeImages( const char* prefix )
 {
