@@ -36,7 +36,7 @@ double zmax = 5000;
 
 GenericScattering simulation("slab");
 
-simulation.setBeamWaist(5); // 20
+simulation.setBeamWaist(4); // 20
 simulation.setBeamAngleX(0.0);
 simulation.setBeamAngleY(0.2);
 simulation.setMaxScatteringAngle(1.0);

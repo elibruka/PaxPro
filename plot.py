@@ -8,6 +8,7 @@ def main():
 		ff = np.array(infile["data/farField"])
 		ei = np.array(infile["data/exitIntensity"])
 		ep = np.array(infile["data/exitPhase"])
+		am = np.array(infile["data/amplitude"])
 	fig=plt.figure()
 	a,b=np.shape(ff)
 	ax = fig.add_subplot(1,1,1)
