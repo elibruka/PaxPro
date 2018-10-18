@@ -27,10 +27,10 @@ CSGMaterial material;
 material.addModule(slab_mod);
 
 
-double xmin = -125;
-double xmax = 125;
-double ymin = -60;
-double ymax = 190;
+double xmin = -140;
+double xmax = 140;
+double ymin = -140; // -60
+double ymax = 140; // 190
 double zmin = 0;
 double zmax = 5000;
 
@@ -42,23 +42,23 @@ simulation.setBeamAngleY(0.2);
 simulation.setMaxScatteringAngle(1.0);
 
 double dx = (xmax-xmin)/512;
-double dy = dy;
-double dz = (zmax-zmin)/256;
+double dy = dx;
+double dz = (zmax-zmin)/256; // 256
   
 simulation.xmin = xmin;
 simulation.xmax = xmax;
-simulation.ymin = xmin;
-simulation.ymax = xmax;
+simulation.ymin = ymin;
+simulation.ymax = ymax;
 simulation.zmin = zmin;
 simulation.zmax = zmax;
 simulation.dx = dx;
-simulation.dy = dx;
+simulation.dy = dy;
 simulation.dz = dz;
 simulation.subtract_reference = false;
 
-simulation.downSampleX = 8;
-simulation.downSampleY = 8;
-simulation.downSampleZ = 8;
+simulation.downSampleX = 16; //8
+simulation.downSampleY = 16; //8
+simulation.downSampleZ = 16; //8
 
 simulation.wavelength = 0.1569;
 
