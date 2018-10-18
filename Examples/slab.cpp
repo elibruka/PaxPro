@@ -41,9 +41,9 @@ simulation.setBeamAngleX(0.0);
 simulation.setBeamAngleY(0.2);
 simulation.setMaxScatteringAngle(1.0);
 
-double dx = (xmax-xmin)/512;
+double dx = (xmax-xmin)/1024; //512
 double dy = dx;
-double dz = (zmax-zmin)/256; // 256
+double dz = (zmax-zmin)/1024; // 256
   
 simulation.xmin = xmin;
 simulation.xmax = xmax;
@@ -56,9 +56,9 @@ simulation.dy = dy;
 simulation.dz = dz;
 simulation.subtract_reference = false;
 
-simulation.downSampleX = 16; //8
-simulation.downSampleY = 16; //8
-simulation.downSampleZ = 16; //8
+simulation.downSampleX = 8; //8
+simulation.downSampleY = 8; //8
+simulation.downSampleZ = 8; //8
 
 simulation.wavelength = 0.1569;
 
