@@ -164,6 +164,9 @@ target_link_libraries( primitiveGeomExample.out ${LIB} paxpro )
 add_executable( slab.out EXCLUDE_FROM_ALL Examples/slab.cpp )
 target_link_libraries( slab.out ${LIB} paxpro )
 
+add_executable( slabSphere.out EXCLUDE_FROM_ALL Examples/slabSphere.cpp )
+target_link_libraries (slabSphere.out ${LIB} paxpro )
+
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 
 add_custom_target(prepare_pypaxpro ALL COMMAND python create_config.py ${CMAKE_CURRENT_SOURCE_DIR} ${LIB} ${dirs} DEPENDS paxpro)
